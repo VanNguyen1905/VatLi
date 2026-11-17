@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07121d">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <title>LABVIRT · Xưởng thực hành linh kiện</title>
+  <link rel="stylesheet" href="./style.css?v=labvirt-v14-utf8">
+<link rel="stylesheet" href="./biscot-room.css?v=15">
+  <link rel="stylesheet" href="./workspace-panels.css">
+<link rel="stylesheet" href="./biscot-tutor.css"/>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="top-brand"><span class="logo" aria-hidden="true">L<span>V</span></span><div><b>LABVIRT <em>WORKSPACE</em></b><small>01.1 / Đọc và đo kiểm tra linh kiện thụ động</small></div></div>
+    <div class="top-buttons"><span class="tag"><i></i> PHIÊN CỤC BỘ</span><button id="toggleTools" type="button" aria-pressed="false" title="Ẩn công cụ để chạm nút trên mô hình 3D">Ẩn công cụ</button><button id="helpBtn" title="Hướng dẫn thao tác">? <span>Hướng dẫn</span></button><a id="backLink" href="../index.html">← <span>Lộ trình</span></a></div>
+  </header>
+  <section class="layout" aria-label="Không gian thực hành">
+    <main class="stage">
+      <canvas id="scene" aria-label="Phòng thí nghiệm từ Blender với thiết bị có thể tương tác"></canvas>
+      <div class="scene-head">
+        <div class="scene-label"><span class="eyebrow">KHÔNG GIAN BLENDER GỐC</span><small id="sceneStatus">Đang nạp phòng và thiết bị…</small></div>
+        <div class="camera-toolbar">
+          <div class="view-buttons" aria-label="Chọn góc nhìn">
+            <button data-view="overview">Toàn phòng</button><button data-view="entrance">Từ cửa</button><button data-view="bench" class="active">Bàn đo</button><button data-view="dmm">DMM</button><button data-view="board">Breadboard</button><button data-view="board-close" title="Phóng gần bảng cắm linh kiện trắng">⊕ Sát breadboard</button><button data-view="scope">Hiện sóng</button><button data-view="supply">Nguồn DC</button><button data-view="generator">Phát hàm</button>
+          </div>
+          <div class="camera-actions"><button id="backToBench">↳ Quay lại bàn đo</button><button id="resetCamera" title="Khôi phục góc nhìn mặc định">↺ Đặt lại camera</button></div>
+        </div>
+      </div>
+      <div id="objectTag" class="object-tag">R1 · 1 kΩ</div>
+      <div class="stage-bottom"><div class="help-short"><span><kbd>KÉO</kbd> Linh kiện / que đo</span><span><kbd>NỀN</kbd> Xoay góc nhìn</span><span><kbd>CUỘN</kbd> Thu phóng</span></div><button id="resetObject">↶ Đặt lại linh kiện</button></div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </main>
+  </section>
+  <nav class="control-dock" aria-label="Công cụ thực hành">
+    <details class="dock-tool" id="dmmDock">
+      <summary><span class="dock-icon">Ω</span><span>Điều khiển DMM<small>Thang đo · Jack · Que đo</small></span><span class="dock-chevron">⌃</span></summary>
+      <aside class="panel dmm"><div class="panel-title"><div><span class="eyebrow">THIẾT BỊ ĐO</span><h2>DMM / Điều khiển</h2></div><button class="close-panel" data-close-dock="dmmDock" aria-label="Thu gọn điều khiển DMM">×</button></div>
+        <div class="meter"><div class="lcd"><span id="modeName">OFF</span><span id="lcdState">SẴN SÀNG</span><strong id="lcdValue">OFF</strong></div><div class="knob-wrap"><button id="dial" aria-label="Xoay núm DMM sang thang kế tiếp"><div class="pointer"></div></button><div class="knob-labels"><button data-mode="OFF" class="active">OFF</button><button data-mode="OHM">Ω</button><button data-mode="CONT">Thông mạch</button><button data-mode="CAP">Điện dung</button><button data-mode="DCV">V DC</button></div></div><p>Số hiển thị đồng bộ với màn LCD trên thiết bị 3D.</p></div>
+        <div class="card-heading">01 / Cắm jack vào đồng hồ</div>
+        <div class="jack-connect"><button class="probe-btn black" id="jackBlack">● Jack đen → COM <span id="jackBlackStatus">Chưa cắm</span></button><button class="probe-btn red" id="jackRed">● Jack đỏ → VΩ <span id="jackRedStatus">Chưa cắm</span></button></div>
+        <div class="mentor-quick"><button id="quickBlackJack" type="button">✓ Cắm đen vào COM</button><button id="quickRedJack" type="button">✓ Cắm đỏ vào VΩ</button></div>
+        <p class="hint">Cầm jack rồi chọn cổng trong cảnh 3D hoặc dùng nút cắm nhanh (đều là hành động của người học).</p>
+        <div class="card-heading">02 / Chạm hai đầu linh kiện</div>
+        <div class="probes"><button id="redProbe" class="probe-btn red">● Que đỏ <span>Chưa chạm</span></button><button id="blackProbe" class="probe-btn black">● Que đen <span>Chưa chạm</span></button></div>
+        <div class="mentor-quick" aria-label="Đặt kim đo vào chân linh kiện"><button id="probeBlackA" type="button">Đen → chân A</button><button id="probeBlackB" type="button">Đen → chân B</button><button id="probeRedA" type="button">Đỏ → chân A</button><button id="probeRedB" type="button">Đỏ → chân B</button></div>
+        <button id="disconnectProbes" class="secondary">Rút hai que khỏi linh kiện</button><div class="rule">R / điện trở thuần cuộn cảm → <b>Ω</b><br>Tụ điện bình thường → <b>Điện dung</b><br>Kiểm tra chạm, đứt → <b>Thang chẩn đoán phù hợp</b></div>
+      </aside>
+    </details>
+    <details class="dock-tool" id="taskDock">
+      <summary><span class="dock-icon">01</span><span>Khay thực hành<small>Linh kiện · Tình huống · Ghi số liệu</small></span><span class="dock-chevron">⌃</span></summary>
+      <aside class="panel task"><div class="panel-title"><div><span class="eyebrow">BÀI 1 / PHẦN 1</span><h2>Kiểm tra linh kiện</h2></div><button class="close-panel" data-close-dock="taskDock" aria-label="Thu gọn khay thực hành">×</button></div>
+        <label for="component">Linh kiện thực hành</label><select id="component"><option value="R1">R1 · Điện trở 1 kΩ ±5%</option><option value="R2">R2 · Điện trở 10 kΩ ±5%</option><option value="R3">R3 · Điện trở 220 Ω ±5%</option><option value="C1">C1 · Tụ gốm 104 / 100 nF</option><option value="C2">C2 · Tụ hóa 100 µF</option><option value="L">L · Cuộn cảm 10 mH</option></select>
+        <label for="defect">Tình huống mô phỏng</label><select id="defect"><option value="NORMAL">SỐNG · Bình thường</option><option value="SHORT">CHẠM · Ngắn mạch</option><option value="OPEN">ĐỨT · Hở mạch</option></select>
+        <div class="selected-card"><div class="value"><b id="componentName">Điện trở R1</b><span id="componentNominal">1 kΩ · ±5%</span></div><small id="componentDesc">Mã màu: Nâu – Đen – Đỏ – Nhũ vàng</small><span id="defectBadge" class="status ok">SỐNG (Tốt)</span></div>
+        <div class="progress-caption"><span>18 trường hợp / 6 linh kiện</span><span>LOCAL</span></div><div class="progress"><div id="progressBar"></div></div><p id="progressText" class="subtext">0/18 trường hợp đã ghi</p>
+        <button class="secondary" id="placeComponent">↳ Đưa linh kiện lên breadboard</button><button class="primary" id="saveBtn">＋ Ghi vào Bảng 1.1</button><button class="secondary" id="clearBtn">Khôi phục phiên làm việc</button>
+        <p class="hint">Chỉ ghi khi cách cắm jack, tiếp xúc và thang đo hợp lệ. Đo lại sẽ cập nhật cùng trường hợp. Kết quả chỉ lưu trên máy này.</p>
+      </aside>
+    </details>
+    <details class="dock-tool" id="instrumentsDock">
+      <summary><span class="dock-icon">∿</span><span>Nguồn &amp; tín hiệu<small>DC · Máy phát hàm · Hiện sóng</small></span><span class="dock-chevron">⌃</span></summary>
+      <aside class="panel task"><div class="panel-title"><h2>Nguồn &amp; tín hiệu</h2><button class="close-panel" data-close-dock="instrumentsDock" aria-label="Thu gọn">×</button></div>
+        <h3>Nguồn DC</h3><button id="supplyPower" class="secondary" aria-pressed="false">○ ĐANG TẮT</button>
+        <label for="supplyVoltage">Điện áp đặt (V)</label><input id="supplyVoltage" type="number" min="0" max="30" step="0.5" value="5">
+        <label for="supplyCurrent">Giới hạn dòng (A)</label><input id="supplyCurrent" type="number" min="0.001" max="1" step="0.001" value="0.02">
+        <h3>Máy phát hàm</h3><button id="generatorPower" class="secondary" aria-pressed="false">○ ĐANG TẮT</button>
+        <label for="generatorFrequency">Tần số (Hz)</label><input id="generatorFrequency" type="number" min="1" max="100000" value="1000">
+        <label for="generatorAmplitude">Biên độ đỉnh (V)</label><input id="generatorAmplitude" type="number" min="0" max="10" step="0.1" value="1">
+        <label for="generatorWave">Dạng tín hiệu</label><select id="generatorWave"><option>SINE</option><option>SQUARE</option><option>RAMP</option><option>PULSE</option></select>
+        <h3>Máy hiện sóng</h3><button id="scopePower" class="secondary" aria-pressed="false">○ ĐANG TẮT</button><button id="scopeRun" class="secondary">Dừng quét</button>
+        <label for="scopeTime">Thời gian / ô (s)</label><input id="scopeTime" type="number" min="0.000001" max="1" step="0.0001" value="0.0002">
+        <label for="scopeVolts">Điện áp / ô (V)</label><input id="scopeVolts" type="number" min="0.01" max="20" step="0.1" value="1">
+        <label for="scopeTrigger">Mức trigger (V)</label><input id="scopeTrigger" type="number" min="-10" max="10" step="0.1" value="0">
+        <p class="hint">Có thể dùng núm và softkey ngay trên thiết bị. Scope: softkey 1 bật/tắt, softkey 2 chạy/dừng. FG: nút 1 bật/tắt, nút 2 đổi sóng. Nguồn DC: núm 1 chỉnh điện áp, núm 2 chỉnh giới hạn dòng.</p>
+      </aside>
+    </details>
+    <details class="dock-tool" id="wiringDock">
+      <summary><span class="dock-icon">⌁</span><span>Kết nối mạch<small>Cổng · Breadboard · Dây dẫn</small></span><span class="dock-chevron">⌃</span></summary>
+      <aside class="panel task"><div class="panel-title"><h2>Kết nối mạch</h2><button class="close-panel" data-close-dock="wiringDock" aria-label="Thu gọn">×</button></div>
+        <p class="hint">Chọn hai đầu dây hoặc chọn trên mô hình. Lỗ A–E cùng cột nối nhau, F–J cùng cột nối nhau; hai nửa cách điện. Mô phỏng không nối các thanh nguồn chưa được khai báo.</p>
+        <label for="wireFrom">Đầu dây thứ nhất</label><select id="wireFrom"></select><button id="pickWireFrom" class="secondary">Chọn đầu 1 trong cảnh</button>
+        <label for="wireTo">Đầu dây thứ hai</label><select id="wireTo"></select><button id="pickWireTo" class="secondary">Chọn đầu 2 trong cảnh</button>
+        <button id="addWire" class="primary">Nối dây</button><p id="circuitStatus" role="status" class="hint"></p><ul id="wireList" class="wire-list"></ul><button id="removeWires" class="secondary">Tháo tất cả dây</button>
+        <p class="hint">Đo DC: nối PSU_POS → R1:PIN_A, PSU_NEG → R1:PIN_B; bật nguồn, chọn V DC và chạm hai que vào R1. Xem sóng: nối FG_OUT → SCOPE_CH1, FG_GND → SCOPE_GND rồi bật hai máy.</p>
+        <p class="safety-note">Hỗ trợ mạch điện trở, Rdc cuộn dây, nguồn lý tưởng và tín hiệu qua mạch thuần trở. Chưa hỗ trợ quá độ RC/RL hoặc linh kiện bán dẫn. Tắt nguồn trước khi đo Ω/C.</p>
+      </aside>
+    </details>
+
+  </nav>
+  <section class="report" aria-label="Bảng số liệu 1.1">
+    <div class="report-head"><div><span class="eyebrow">SỔ THỰC HÀNH</span><b>Bảng số liệu 1.1</b></div><div class="report-actions"><button id="exportExcel" title="Xuất bảng số liệu Excel .xlsx">↓ Excel</button><button id="exportCsv" title="Xuất bảng số liệu CSV">↓ CSV</button><button id="reportToggle">Mở bảng ▴</button></div></div>
+    <div id="reportBody" class="hidden"><table><thead><tr><th>Tên linh kiện</th><th>Trị số danh định</th><th>Dung sai cho phép</th><th>Thực tế đo được</th><th>Trạng thái linh kiện</th><th>Kết luận chất lượng</th></tr></thead><tbody id="reportRows"><tr><td colspan="6" class="empty">Chưa có số liệu. Thực hiện phép đo rồi ghi vào bảng.</td></tr></tbody></table></div>
+  </section>
+  <!-- Trợ giảng bổ sung độc lập, không thay hoặc đụng asset Blender nào. -->
+  <button type="button" id="mentorOpen" class="mentor-launch" aria-controls="mentorPanel" aria-label="Mở trợ giảng AI">🤖 Hỏi trợ giảng AI</button>
+  <aside id="mentorPanel" class="mentor-panel" hidden aria-label="Trợ giảng LABVIRT trong phòng thực hành">
+    <header class="mentor-header"><div><b>🤖 LABVIRT · AI MENTOR</b><small id="mentorConnection">● Đang kiểm tra kết nối…</small></div><button type="button" id="mentorClose" aria-label="Đóng trợ giảng">×</button></header>
+    <div class="mentor-step" id="mentorStep" role="status">Đang xác định bước hiện tại…</div>
+    <label class="mentor-label" for="mentorTopics">Tài liệu thực hành</label><select id="mentorTopics"></select>
+    <div id="mentorLog" class="mentor-log" role="log" aria-live="polite"></div>
+    <div class="mentor-actions"><button type="button" id="mentorHelp">Hướng dẫn bước này</button><button type="button" id="mentorPoint">Chỉ vị trí</button><button type="button" id="mentorCheck">Kiểm tra DMM</button><button type="button" id="mentorDance">Nhảy múa</button><button type="button" id="mentorMute">🔇 Bật đọc</button></div>
+    <form id="mentorAsk" class="mentor-form"><input id="mentorInput" type="text" maxlength="1000" placeholder="Hỏi: Tại sao DMM hiện O.L?" aria-label="Nhập câu hỏi cho trợ giảng" autocomplete="off"><button id="mentorSend" type="submit">Gửi</button></form>
+    <small class="mentor-disclaimer">Trạng thái dụng cụ lấy từ ứng dụng. Tài liệu trang 6–7 chỉ hỗ trợ thực hành R/C/L; các bài khác là tham khảo. Không thay thế hướng dẫn an toàn tại phòng thực tế.</small>
+  </aside>
+  <div class="modal hidden" id="guide" role="dialog" aria-modal="true" aria-labelledby="guideTitle"><div class="guide-box"><button id="closeGuide" class="modal-x" aria-label="Đóng hướng dẫn">×</button><span class="eyebrow">LABVIRT / BẮT ĐẦU</span><h2 id="guideTitle">Từ linh kiện tới kết quả đo.</h2><ol><li>Mở <b>Khay thực hành</b>, chọn linh kiện và tình huống.</li><li>Mở <b>Điều khiển DMM</b>. Cắm jack đen vào COM, jack đỏ vào VΩ trên mô hình.</li><li>Chọn đúng thang đo, chọn que đỏ/đen và chạm hai chân khác nhau của linh kiện.</li><li>Đọc LCD trên DMM hoặc bảng điều khiển. Chỉ khi phép đo hợp lệ mới ghi <b>Bảng 1.1</b>.</li></ol><p class="safety-note">Tắt nguồn và xả tụ trước khi đo Ω/C. 10 mH là điện cảm; thang Ω chỉ đo điện trở thuần dây quấn. Mở Nguồn &amp; tín hiệu và Kết nối mạch để thực hành DC và xem sóng qua mạch thuần trở.</p><button id="acceptGuide" class="primary">Đã hiểu · Bắt đầu thực hành</button></div></div>
+</div>
+<script>
+  document.getElementById('toggleTools').addEventListener('click', function() {
+    var hidden = document.body.classList.toggle('native-canvas-mode');
+    this.textContent = hidden ? 'Hiện công cụ' : 'Ẩn công cụ';
+    this.setAttribute('aria-pressed', String(hidden));
+  });
+  document.querySelectorAll('.dock-tool').forEach(function(dock) {
+    // Native exclusive details grouping avoids queued toggle events closing a
+    // freshly opened instrument panel when switching tools quickly.
+    dock.setAttribute('name', 'labvirt-tools');
+  });
+  document.querySelectorAll('[data-close-dock]').forEach(function(button) {
+    button.addEventListener('click', function() { document.getElementById(button.dataset.closeDock).open = false; });
+  });
+</script>
+<script>
+window.addEventListener('error',function(event){
+  if(window.labvirtDiagnostics)return;
+  var text='Không tải được mã phòng 3D: '+(event.message||event.target.src||'script bị thiếu');
+  document.getElementById('sceneStatus').textContent=text;
+  if(parent!==window)parent.postMessage({type:'labvirt:scene-error',attempt:Number(new URLSearchParams(location.search).get('attempt')||0),message:text},location.origin);
+},true);
+</script>
+<script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
+<script type="module" src="./runtime-loader.js"></script>
+<script type="module" src="./workspace-panels.js"></script>
+<link rel="stylesheet" href="../live/canvas-stream.css"/>
+</body>
+</html>

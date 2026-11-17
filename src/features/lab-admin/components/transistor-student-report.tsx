@@ -1,0 +1,7 @@
+import {useEffect,useState} from 'react';
+import {listenTransistorReport,transistorSyncEnabled,type TransistorReport} from '@/features/lab/services/transistor-progress';
+export function TransistorStudentReport({uid,course}:{uid:string;course:number}){
+ const [state,setState]=useState<{report?:TransistorReport;status:string}>({status:transistorSyncEnabled?'Đang tải báo cáo từ server.':'Đồng bộ báo cáo Bài 2–3 chưa bật.'});
+ useEffect(()=>{let active=true;const stop=listenTransistorReport(uid,course===2?'B2':'B3',report=>{if(active)setState({report,status:'Đã tải báo cáo từ server, phiên bản '+report.revision});},error=>{if(active)setState({status:'Chưa tải được báo cáo: '+error});},()=>{if(active)setState({status:'Chưa có báo cáo được lưu trên server.'});});return()=>{active=false;stop();};},[uid,course]);
+ return <article><h4>Báo cáo thu hoạch Bài {course}</h4><p role="status">{state.status}</p>{state.report&&<dl>{([['group','Nhóm'],['objectives','Mục tiêu'],['theory','Cơ sở lý thuyết'],['discussion','Nhận xét']] as const).map(([key,label])=><div key={key}><dt className="font-semibold">{label}</dt><dd className="whitespace-pre-wrap text-sm">{state.report!.fields[key]||'Chưa nhập'}</dd></div>)}{state.report.fields.answers.map((answer,i)=><div key={i}><dt className="font-semibold">Câu củng cố {i+1}</dt><dd className="whitespace-pre-wrap text-sm">{answer||'Chưa trả lời'}</dd></div>)}</dl>}</article>;
+}

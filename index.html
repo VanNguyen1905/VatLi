@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0B0E17" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="LAB THỰC HÀNH" />
+<meta name="description" content="Hệ thống phòng thí nghiệm ảo 3D: danh mục bài thí nghiệm, theo dõi sinh viên và báo cáo thực hành." />                                                                                        <title>LAB THỰC HÀNH | BỘ MÔN VẬT LÝ CÔNG NGHỆ</title>       <meta name="vantien-ui-build" content="hero-calendar-v3.2" />
+  <link rel="icon" type="image/webp" href="/utt-v5/utt-icon.webp" />
+
+<!-- UTT_V5_START -->
+<link rel="stylesheet" href="/utt-v5/ui.css" />
+<script defer src="/utt-v5/ui.js"></script>
+<!-- UTT_V5_END -->
+<!-- UTT-INFO-V6-START -->
+<link rel="stylesheet" href="/utt-info-assets/launcher.css">
+<script defer src="/utt-info-assets/launcher.js"></script>
+<!-- UTT-INFO-V6-END -->
+<!-- UTT-V7-SAFE-START -->
+<link rel="stylesheet" href="/utt-v7/ui.css">
+<script defer src="/utt-v7/ui.js"></script>
+<!-- UTT-V7-SAFE-END -->
+
+<!-- UTT-V9-SOURCE-START -->
+<script>(function(){try{var s=sessionStorage;var seen=s.getItem('utt-v9-intro-seen')==='1'||s.getItem('utt-v7-intro-seen')==='1'||s.getItem('utt-v8-intro-played')==='1';if(seen)document.documentElement.classList.add('utt-v9-returning');s.setItem('utt-v9-intro-seen','1')}catch(_){}})();</script>
+<link rel="stylesheet" href="/utt-v9/katex.css" />
+<link rel="stylesheet" href="/utt-v9/style.css" />
+<!-- UTT-V9-SOURCE-END -->
+</head>
+  <body class="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+    <div id="root"><p role="status" style="padding:24px;color:#b9d8f4;font:14px system-ui">Đang mở LABVIRT…</p></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>

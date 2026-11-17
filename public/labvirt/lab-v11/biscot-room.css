@@ -1,0 +1,79 @@
+/* Biscot V12: overlay tương tác 2D. Tuyệt đối không sửa camera/mesh/material Blender. */
+#biscot-room, #biscot-room * { box-sizing:border-box; }
+#biscot-room { position:fixed; right:clamp(12px,2vw,28px); bottom:var(--biscot-bottom); --biscot-bottom:clamp(184px,23vh,240px); z-index:85; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; color:#f1f9ff; pointer-events:none; font-size:14px; }
+#biscot-room button,#biscot-room input {font:inherit}
+#biscot-room button {cursor:pointer;}
+#biscot-room .biscot-launch {pointer-events:auto;display:flex;align-items:center;gap:9px;padding:6px 14px 6px 5px;border-radius:48px;border:1px solid #7dc9f4;background:linear-gradient(100deg,#12326d,#125b94);color:#fff;box-shadow:0 12px 30px #071228b9;font-weight:750;}
+#biscot-room .biscot-launch img {width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 5px 5px #0019);}
+#biscot-room .biscot-launch small {display:block;font-size:10px;font-weight:500;color:#c5eaff;margin-top:3px}
+#biscot-room .biscot-panel {pointer-events:auto;width:min(390px,calc(100vw - 24px));height:min(445px,calc(100dvh - var(--biscot-bottom) - 105px));min-height:240px;display:flex;flex-direction:column;position:absolute;right:0;bottom:76px;overflow:hidden;border:1px solid #477db0;border-radius:19px;background:#091a33;box-shadow:0 20px 55px #000a;}
+#biscot-room [hidden] {display:none!important}
+#biscot-room .biscot-header {display:flex;align-items:center;gap:9px;padding:10px 12px;background:linear-gradient(100deg,#133e7c,#155e96);border-bottom:1px solid #527aa8;}
+#biscot-room .biscot-header img {width:48px;height:48px;object-fit:contain}
+#biscot-room .biscot-header div {flex:1;min-width:0}
+#biscot-room .biscot-header strong {display:block;font-size:16px}
+#biscot-room .biscot-header small {font-size:10px;color:#d8f0ff}
+#biscot-room .biscot-close {background:transparent;border:0;color:white;font-size:24px;padding:4px 7px}
+#biscot-room .biscot-live {padding:8px 12px;background:#0e2c4b;color:#cfeaff;font-size:11px;line-height:1.55;white-space:normal;}
+#biscot-room .biscot-light {display:inline-block;width:8px;height:8px;border-radius:50%;background:#e8ac42;margin-right:6px;}
+#biscot-room .biscot-light.is-live {background:#42db9b}
+#biscot-room .biscot-talk {flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px;overscroll-behavior:contain}
+#biscot-room .biscot-bubble {max-width:95%;padding:10px 11px;border-radius:12px;background:#15365d;border:1px solid #264968;color:#eef8ff;font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+#biscot-room .biscot-bubble.user {align-self:flex-end;background:#226ca4;border-color:#377fc2}
+#biscot-room .biscot-bubble.system {background:#2c2c37;border-color:#746244;color:#ffe8b0}
+#biscot-room .biscot-actions {display:flex;flex-wrap:wrap;gap:6px;padding:9px 10px 5px;border-top:1px solid #355a83}
+#biscot-room .biscot-actions button {padding:7px 9px;color:#d6efff;border:1px solid #426a94;background:#153355;border-radius:8px;font-size:11px}
+#biscot-room .biscot-actions button:hover {background:#215b85}
+#biscot-room .biscot-form {display:flex;gap:6px;padding:8px 10px 12px}
+#biscot-room .biscot-form input {min-width:0;flex:1;background:#06152c;color:white;border:1px solid #4779a7;padding:10px 11px;border-radius:10px;outline-offset:2px}
+#biscot-room .biscot-form button {border:0;border-radius:10px;color:white;padding:7px 12px;background:#1974b8;font-weight:700}
+#biscot-room .biscot-form button:disabled {opacity:.5;cursor:wait}
+#biscot-room.is-open .biscot-launch {visibility:hidden;pointer-events:none;}
+#biscot-room img.biscot-character {transform-origin:50% 80%;animation:biscot-idle 2.5s ease-in-out infinite;}
+#biscot-room[data-mood='wave'] img.biscot-character {animation:biscot-wave .8s ease-in-out 2}
+#biscot-room[data-mood='run'] img.biscot-character {animation:biscot-run .34s ease-in-out 9}
+#biscot-room[data-mood='jump'] img.biscot-character {animation:biscot-jump .7s ease-in-out 3}
+#biscot-room[data-mood='dance'] img.biscot-character {animation:biscot-dance .86s ease-in-out 6}
+#biscot-room[data-mood='think'] img.biscot-character {animation:biscot-think .8s ease-in-out infinite}
+#biscot-room[data-mood='point'] img.biscot-character {animation:biscot-point .65s ease-in-out 3}
+#biscot-room[data-mood='success'] img.biscot-character {animation:biscot-jump .8s ease-in-out 3}
+#biscot-room[data-mood='warn'] img.biscot-character {animation:biscot-warn .32s ease-in-out 3}
+#biscot-room .biscot-spot {position:fixed;z-index:83;pointer-events:none;transform:translate(-50%,-50%);width:45px;height:45px;border:3px solid #ffde59;border-radius:50%;box-shadow:0 0 0 8px #f8d33436,0 0 26px #ffe46b;animation:biscot-spot 1s ease-out infinite;}
+#biscot-room .biscot-spot span {position:absolute;left:50%;top:-34px;transform:translateX(-50%);background:#06294e;border:1px solid #f4d956;border-radius:7px;color:white;white-space:nowrap;font-size:12px;padding:4px 7px}
+@keyframes biscot-idle {50%{transform:translateY(-4px) scale(1.025)}}
+@keyframes biscot-wave {25%{transform:rotate(-16deg) translateY(-7px)}65%{transform:rotate(13deg)}}
+@keyframes biscot-run {0%{transform:translate(-8px,-1px) rotate(-10deg)}50%{transform:translate(8px,-8px) rotate(10deg)}}
+@keyframes biscot-jump {0%,100%{transform:translateY(0)}50%{transform:translateY(-28px) scale(1.06)}}
+@keyframes biscot-dance {20%{transform:translateY(-12px) rotate(-18deg)}45%{transform:translateY(-3px) rotate(16deg)}75%{transform:translateY(-18px) rotate(-12deg)}}
+@keyframes biscot-think {50%{transform:rotate(8deg) translateY(-3px)}}
+@keyframes biscot-point {50%{transform:translateX(-12px) rotate(-12deg)}}
+@keyframes biscot-warn {25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes biscot-spot {50%{box-shadow:0 0 0 18px #f8d3340d,0 0 17px #ffe46b}}
+@media(max-width:600px) {#biscot-room{--biscot-bottom:182px;right:10px}#biscot-room .biscot-panel{height:min(390px,calc(100dvh - 275px))}#biscot-room .biscot-launch img{width:48px;height:48px}}
+@media(prefers-reduced-motion:reduce){#biscot-room .biscot-character,#biscot-room .biscot-spot{animation:none!important}}
+
+/* V13: Biscot đứng cao hơn sổ đo; bảng mở và hội thoại không chồng nhau. */
+@media (max-height:650px) {#biscot-room {--biscot-bottom:clamp(125px,22vh,165px)} #biscot-room .biscot-panel {height:min(370px,calc(100dvh - var(--biscot-bottom) - 96px))}}
+#biscot-room {font-family:"Segoe UI","Noto Sans",Arial,sans-serif;font-synthesis:none}
+
+/* V15: giữ bảng tiến độ không che phần nhập câu hỏi hoặc sổ thực hành. */
+#biscot-room .biscot-progress { padding:7px 11px; background:#0b2847; color:#e0f3ff; font-size:11px; line-height:1.4; border-bottom:1px solid #345c85; }
+#biscot-room .biscot-talk { min-height:62px; }
+#biscot-room .biscot-panel { height:min(500px,calc(100dvh - var(--biscot-bottom) - 100px)); }
+#biscot-room .biscot-bubble { font-family:"Segoe UI","Noto Sans",Arial,sans-serif; font-variant-ligatures:normal; }
+@media(max-height:670px) { #biscot-room .biscot-panel {height:min(400px,calc(100dvh - var(--biscot-bottom) - 90px));} }
+
+/* The input must remain inside the viewport on laptop and phone landscape. */
+#biscot-room .biscot-panel {min-height:0;max-height:calc(100dvh - 24px);}
+#biscot-room .biscot-header,#biscot-room .biscot-form,#biscot-room .biscot-actions {flex-shrink:0;}
+#biscot-room .biscot-talk {min-height:0;}
+@media(max-height:670px){
+  #biscot-room .biscot-panel {position:fixed;left:12px;right:auto;top:12px;bottom:88px;height:auto;width:min(380px,46vw);}
+  #biscot-room .biscot-header {padding:5px 9px;}
+  #biscot-room .biscot-header img {width:30px;height:30px;}
+  #biscot-room .biscot-live,#biscot-room .biscot-progress {padding:4px 9px;font-size:10px;}
+  #biscot-room .biscot-actions {gap:3px;padding:4px 7px;}
+  #biscot-room .biscot-actions button {padding:4px 6px;font-size:10px;}
+  #biscot-room .biscot-form {padding:5px 7px;}
+  #biscot-room .biscot-form input {padding:7px;}
+}

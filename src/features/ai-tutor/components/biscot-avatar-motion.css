@@ -1,0 +1,22 @@
+/* Chỉ cử động hình Biscot gốc (PNG alpha), không tạo nhân vật khác / không tác động WebGL. */
+.biscot-motion { display: block; position: relative; transform-origin: 50% 82%; will-change: transform; filter: drop-shadow(0 8px 12px rgba(22,38,95,.30)); }
+.biscot-motion--idle { animation: biscot-breathe 2.8s ease-in-out infinite; }
+.biscot-motion--wave { animation: biscot-wave .95s ease-in-out 2; }
+.biscot-motion--think { animation: biscot-think 1.4s ease-in-out infinite; }
+.biscot-motion--speak { animation: biscot-speak .48s ease-in-out infinite; }
+.biscot-motion--point { animation: biscot-point .6s ease-in-out 3; }
+.biscot-motion--jump { animation: biscot-jump .82s cubic-bezier(.45,0,.3,1) 2; }
+.biscot-motion--run { animation: biscot-run .45s ease-in-out 6; }
+.biscot-motion--dance { animation: biscot-dance 1.05s ease-in-out 4; }
+.biscot-motion--warn { animation: biscot-warn .4s ease-in-out 3; }
+.biscot-motion--success { animation: biscot-jump .74s ease-in-out 3; }
+@keyframes biscot-breathe {0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.025)}}
+@keyframes biscot-wave {0%,100%{transform:rotate(0) translateY(0)}30%{transform:rotate(-13deg) translateY(-8px)}60%{transform:rotate(11deg) translateY(-4px)}}
+@keyframes biscot-think {0%,100%{transform:rotate(-5deg)}50%{transform:rotate(7deg) translateY(-4px)}}
+@keyframes biscot-speak {0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.035)}}
+@keyframes biscot-point {0%,100%{transform:translateX(0) rotate(0)}50%{transform:translateX(-8px) rotate(-13deg)}}
+@keyframes biscot-jump {0%,100%{transform:translateY(0) scale(1)}22%{transform:translateY(5px) scale(1.09,.92)}52%{transform:translateY(-20px) scale(.96,1.07)}75%{transform:translateY(-5px) scale(1.02,.98)}}
+@keyframes biscot-run {0%,100%{transform:translateX(-7px) rotate(-9deg) translateY(0)}50%{transform:translateX(9px) rotate(10deg) translateY(-7px)}}
+@keyframes biscot-dance {0%,100%{transform:translateY(0) rotate(0) scale(1)}25%{transform:translateY(-12px) rotate(-17deg) scale(1.06)}50%{transform:translateY(-4px) rotate(16deg) scale(.98)}75%{transform:translateY(-15px) rotate(-9deg) scale(1.06)}}
+@keyframes biscot-warn {0%,100%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-5deg)}75%{transform:translateX(4px) rotate(5deg)}}
+@media (prefers-reduced-motion: reduce) {.biscot-motion {animation:none !important;transition:none !important;}}

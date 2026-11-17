@@ -1,0 +1,26 @@
+/* UTT V9: CSS nhỏ gọn cho React AI Biscot và nút quay về trang UTT. */
+html.utt-v9-returning #utt-v5-intro{display:none!important;visibility:hidden!important;pointer-events:none!important}
+#utt-v5-intro .utt-v5-intro-note{display:none!important}
+.utt-v9-rich-text{line-height:1.7;overflow-wrap:anywhere;white-space:normal;min-width:0}
+.utt-v9-rich-text p{margin:.15em 0 .8em}
+.utt-v9-rich-text p:last-child{margin-bottom:0}
+.utt-v9-rich-text h1,.utt-v9-rich-text h2,.utt-v9-rich-text h3,.utt-v9-rich-text h4{font-size:1.07em;font-weight:800;line-height:1.45;margin:1em 0 .35em}
+.utt-v9-rich-text strong{font-weight:800}
+.utt-v9-rich-text ul,.utt-v9-rich-text ol{list-style:initial;margin:.5em 0 .75em;padding-left:1.4rem}
+.utt-v9-rich-text ol{list-style:decimal}
+.utt-v9-rich-text li{margin:.25em 0}
+.utt-v9-rich-text blockquote{margin:.8em 0;padding:.2em .8em;border-left:3px solid #8b7ef4;opacity:.95}
+.utt-v9-rich-text a{color:#9f9aff;text-decoration:underline;text-underline-offset:2px}
+.utt-v9-rich-text code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;padding:.08em .3em;border-radius:.25rem;background:rgba(100,116,139,.13);font-size:.92em}
+.utt-v9-rich-text pre{margin:.8em 0;overflow-x:auto;padding:.75rem;border-radius:.65rem;background:rgba(15,23,42,.85);color:#f8fafc}
+.utt-v9-rich-text pre code{background:transparent;padding:0;white-space:pre;overflow-wrap:normal}
+.utt-v9-rich-text table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;margin:.6em 0}
+.utt-v9-rich-text th,.utt-v9-rich-text td{border:1px solid rgba(148,163,184,.4);padding:.35rem .5rem}
+.utt-v9-rich-text .utt-v9-math-block{display:block;overflow-x:auto;max-width:100%;padding:.45em .2em;margin:.65em 0;text-align:center}
+.utt-v9-rich-text .utt-v9-math-inline{display:inline-block;vertical-align:middle;max-width:100%}
+.utt-v9-rich-text .katex-display{margin:.2em 0}
+.utt-v9-rich-text .katex{font-size:1.09em}
+.utt-v9-rich-text .utt-v9-invalid-math{color:#f59e0b}
+.utt-v9-back{display:inline-flex;align-items:center;gap:.5rem;width:fit-content;margin:0 0 22px;padding:11px 17px;border-radius:12px;border:1px solid rgba(195,219,255,.65);background:rgba(4,21,54,.65);color:#fff!important;font:700 14px/1.3 Inter,system-ui,sans-serif;text-decoration:none!important;box-shadow:0 4px 24px rgba(0,12,40,.16)}
+.utt-v9-back:hover,.utt-v9-back:focus-visible{background:#403ba1;border-color:white;outline:2px solid #a5c8fa;outline-offset:2px}
+@media(max-width:600px){.utt-v9-rich-text .katex{font-size:1em}.utt-v9-back{font-size:13px;padding:10px 12px}}

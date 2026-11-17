@@ -1,0 +1,1614 @@
+{
+  "version": 1,
+  "revision": "final-qa1",
+  "locale": "vi-VN",
+  "basis": "Tài liệu thực hành Vật lý bán dẫn & Linh kiện; một số công thức được diễn giải theo kiến thức điện tử cơ bản. Không thay thế số đo và hướng dẫn an toàn tại phòng thật.",
+  "entries": [
+    {
+      "id": "KB001",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Trước khi bật nguồn thí nghiệm cần làm gì?",
+      "answer": "Kiểm tra sơ đồ nối dây, đúng cực tính linh kiện, mức điện áp nguồn và xin phép giảng viên trước khi cấp điện.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB002",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Nếu có mùi khét hoặc khói ở bàn thực hành phải làm gì?",
+      "answer": "Ngắt nguồn điện ngay và báo giảng viên hoặc kỹ thuật viên; không tiếp tục đo hoặc chạm vào phần đang nóng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB003",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Vì sao không được ăn uống trong phòng thí nghiệm?",
+      "answer": "Để tránh chất lỏng gây chập điện, làm bẩn linh kiện và mất an toàn khi thao tác với thiết bị.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB004",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Có được đo điện trở khi mạch đang cấp nguồn không?",
+      "answer": "Không. Phải ngắt nguồn và kiểm tra điện áp đã về mức an toàn trước khi chọn thang Ω; điện áp ngoài có thể làm hỏng DMM.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB005",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Có được đo thông mạch khi mạch đang có điện không?",
+      "answer": "Không. Chế độ thông mạch dùng nguồn thử của đồng hồ; phải ngắt điện và xả năng lượng còn lưu trước khi đo.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB006",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Tại sao cần xả tụ trước khi tháo lắp?",
+      "answer": "Tụ có thể còn điện tích sau khi ngắt nguồn, gây giật điện hoặc làm hỏng thiết bị đo và linh kiện.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB007",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Có nên dùng dây nối tắt trực tiếp để xả tụ điện không?",
+      "answer": "Không nên. Dòng xả tức thời có thể rất lớn; thực hiện đúng quy trình xả qua điện trở theo hướng dẫn và kiểm tra lại điện áp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB008",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Tại sao phải kiểm tra cực tính của tụ hóa?",
+      "answer": "Tụ hóa phân cực; lắp ngược có thể nóng, rò, hỏng hoặc nổ khi cấp điện.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB009",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Tại sao phải có điện trở hạn dòng cho LED?",
+      "answer": "Điện trở hạn dòng giúp giới hạn dòng qua LED trong mức cho phép, tránh làm LED quá nhiệt hoặc hỏng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB010",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Tại sao phải hạn dòng khi dùng diode Zener?",
+      "answer": "Nếu thiếu điện trở hạn dòng, dòng Zener có thể vượt giới hạn công suất và làm hỏng diode.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB011",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Có được cắm hoặc rút dây breadboard khi nguồn đang bật không?",
+      "answer": "Trong bài thực hành, nên ngắt nguồn trước khi thay dây hoặc linh kiện, trừ quy trình được giảng viên phê duyệt riêng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB012",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Vì sao phải lưu ý mass của hai kênh oscilloscope?",
+      "answer": "Mass của nhiều máy hiện sóng nối chung và nối đất bảo vệ; kẹp vào hai điểm có điện thế khác nhau có thể gây ngắn mạch.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB013",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Có được nối mass oscilloscope vào hai điểm khác nhau của mạch cầu không?",
+      "answer": "Không tự ý thực hiện. Với máy hiện sóng thông dụng, hai kẹp mass có thể chung điện; hãy đo lần lượt hoặc dùng đầu đo vi sai phù hợp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB014",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Khi linh kiện nóng bất thường phải xử lý thế nào?",
+      "answer": "Ngắt điện, không chạm tay trực tiếp, báo giảng viên và kiểm tra lại sơ đồ cùng thông số trước khi cấp nguồn lại.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB015",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Trang phục nào phù hợp khi làm thí nghiệm?",
+      "answer": "Mặc gọn gàng, đi giày kín mũi, buộc gọn tóc dài và dùng đồ bảo hộ theo nội quy phòng lab.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB016",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Vì sao không được ép mạnh linh kiện vào breadboard?",
+      "answer": "Lực quá lớn có thể làm cong chân linh kiện hoặc hỏng lá tiếp xúc bên trong lỗ breadboard.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB017",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Kết thúc buổi thí nghiệm cần làm gì?",
+      "answer": "Tắt thiết bị, ngắt nguồn, tháo dây gọn, trả linh kiện đúng khay, dọn bàn và bàn giao theo hướng dẫn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB018",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Tại sao không được tự ý thay đổi vị trí thiết bị trên bàn?",
+      "answer": "Việc di chuyển tùy ý có thể làm căng dây, thay đổi nối đất hoặc gây mất an toàn và sai cấu hình thực hành.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB019",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Khi chưa biết đầu nào là mass thì có nên đo ngay không?",
+      "answer": "Không. Xác định mass và đường nguồn trên sơ đồ, kiểm tra kết nối trước khi gắn que đo.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB020",
+      "section": "An toàn phòng thí nghiệm",
+      "question": "Có cần xác nhận mức điện áp nguồn trước khi bật không?",
+      "answer": "Có. Kiểm tra điện áp, giới hạn dòng và cực tính để tránh cấp điện quá mức cho linh kiện hoặc nhầm đầu nối.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–4",
+      "review": "curated"
+    },
+    {
+      "id": "KB021",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Định luật Ôm là gì?",
+      "answer": "Định luật Ôm: U = I × R với U tính bằng V, I bằng A, R bằng Ω. Áp dụng cho phần tử thuần trở trong điều kiện phù hợp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated",
+      "aliases": [
+        "Công thức định luật Ohm?",
+        "Định luật Ohm là gì?",
+        "Tính điện áp từ dòng điện và điện trở thế nào?",
+        "Tính điện áp từ dòng điện và điện trở như thế nào?"
+      ]
+    },
+    {
+      "id": "KB022",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Công thức tính điện trở từ điện áp và dòng điện là gì?",
+      "answer": "R = U/I khi I khác 0; đơn vị là ôm (Ω).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB023",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Công thức tính dòng điện qua điện trở là gì?",
+      "answer": "I = U/R khi R khác 0; đơn vị là ampe (A).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB024",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Công thức tính công suất trên điện trở là gì?",
+      "answer": "P = U × I = I² × R = U²/R khi áp dụng định luật Ôm và đúng điều kiện đo.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB025",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Đơn vị của điện áp là gì?",
+      "answer": "Đơn vị SI của điện áp là vôn (V).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB026",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Đơn vị của dòng điện là gì?",
+      "answer": "Đơn vị SI của dòng điện là ampe (A).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB027",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Đơn vị điện trở là gì?",
+      "answer": "Đơn vị điện trở là ôm, ký hiệu Ω; 1 kΩ = 1000 Ω.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB028",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Đơn vị điện dung là gì?",
+      "answer": "Đơn vị điện dung là fara (F); trong điện tử thường dùng µF, nF hoặc pF.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB029",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Đơn vị của độ tự cảm là gì?",
+      "answer": "Đơn vị độ tự cảm là henry (H), thường gặp mH và µH.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB030",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Một miliampe bằng bao nhiêu ampe?",
+      "answer": "1 mA = 0,001 A; 1 A = 1000 mA.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB031",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Một microfarad bằng bao nhiêu nanofarad?",
+      "answer": "1 µF = 1000 nF = 1.000.000 pF.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB032",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Một kiloom bằng bao nhiêu ôm?",
+      "answer": "1 kΩ = 1000 Ω; 1 MΩ = 1.000.000 Ω.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB033",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Điện áp một chiều DC là gì?",
+      "answer": "DC là điện áp/dòng điện có cực tính quy ước không đảo theo thời gian; trị số có thể vẫn thay đổi.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB034",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Điện áp xoay chiều AC là gì?",
+      "answer": "AC thay đổi theo thời gian và thông thường đổi chiều/cực tính theo chu kỳ.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB035",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Giá trị RMS của điện áp AC có ý nghĩa gì?",
+      "answer": "RMS là giá trị hiệu dụng: điện áp DC tương đương về công suất trung bình trên tải thuần trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB036",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Công thức điện áp đỉnh của sóng sin từ RMS là gì?",
+      "answer": "Vđỉnh = √2 × Vrms đối với sóng sin lý tưởng không có thành phần DC.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB037",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Công thức chu kỳ theo tần số là gì?",
+      "answer": "T = 1/f, trong đó T tính bằng giây và f tính bằng hertz (Hz).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB038",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Tần số 50 Hz có chu kỳ bao nhiêu?",
+      "answer": "Với f = 50 Hz, T = 1/50 s = 20 ms.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB039",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Tại sao phải ghi đơn vị sau kết quả đo?",
+      "answer": "Số không có đơn vị dễ gây nhầm bậc độ lớn, làm sai đối chiếu lý thuyết và báo cáo.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB040",
+      "section": "Đại lượng và công thức cơ bản",
+      "question": "Vì sao số đo thực tế có thể lệch giá trị danh định?",
+      "answer": "Do dung sai linh kiện, nhiệt độ, dụng cụ đo, điểm tiếp xúc, điều kiện mạch và sai số mô hình/thao tác.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–6",
+      "review": "curated"
+    },
+    {
+      "id": "KB041",
+      "section": "Điện trở và mã màu",
+      "question": "Điện trở có tác dụng gì trong mạch điện?",
+      "answer": "Điện trở hạn chế dòng điện và tạo sụt áp; với điện trở thuần, quan hệ cơ bản là U = I × R.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB042",
+      "section": "Điện trở và mã màu",
+      "question": "Đọc điện trở bốn vòng màu như thế nào?",
+      "answer": "Vòng 1 và 2 là hai chữ số, vòng 3 là bội số nhân, vòng 4 là dung sai.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB043",
+      "section": "Điện trở và mã màu",
+      "question": "Đọc điện trở năm vòng màu như thế nào?",
+      "answer": "Vòng 1–3 là ba chữ số có nghĩa, vòng 4 là bội số nhân và vòng 5 là dung sai.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB044",
+      "section": "Điện trở và mã màu",
+      "question": "Màu đen trong mã màu điện trở đại diện số mấy?",
+      "answer": "Đen = 0 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB045",
+      "section": "Điện trở và mã màu",
+      "question": "Màu nâu trong mã màu điện trở đại diện số mấy?",
+      "answer": "Nâu = 1 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB046",
+      "section": "Điện trở và mã màu",
+      "question": "Màu đỏ trong mã màu điện trở đại diện số mấy?",
+      "answer": "Đỏ = 2 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB047",
+      "section": "Điện trở và mã màu",
+      "question": "Màu cam trong mã màu điện trở đại diện số mấy?",
+      "answer": "Cam = 3 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB048",
+      "section": "Điện trở và mã màu",
+      "question": "Màu vàng trong mã màu điện trở đại diện số mấy?",
+      "answer": "Vàng = 4 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB049",
+      "section": "Điện trở và mã màu",
+      "question": "Màu lục trong mã màu điện trở đại diện số mấy?",
+      "answer": "Lục = 5 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB050",
+      "section": "Điện trở và mã màu",
+      "question": "Màu lam trong mã màu điện trở đại diện số mấy?",
+      "answer": "Lam/xanh dương = 6 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB051",
+      "section": "Điện trở và mã màu",
+      "question": "Màu tím trong mã màu điện trở đại diện số mấy?",
+      "answer": "Tím = 7 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB052",
+      "section": "Điện trở và mã màu",
+      "question": "Màu xám trong mã màu điện trở đại diện số mấy?",
+      "answer": "Xám = 8 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB053",
+      "section": "Điện trở và mã màu",
+      "question": "Màu trắng trong mã màu điện trở đại diện số mấy?",
+      "answer": "Trắng = 9 theo mã màu điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB054",
+      "section": "Điện trở và mã màu",
+      "question": "Vòng nhũ vàng ở điện trở có nghĩa gì?",
+      "answer": "Nếu nằm ở vòng dung sai, nhũ vàng thường chỉ dung sai ±5%.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB055",
+      "section": "Điện trở và mã màu",
+      "question": "Vòng nhũ bạc ở điện trở có nghĩa gì?",
+      "answer": "Nếu nằm ở vòng dung sai, nhũ bạc thường chỉ dung sai ±10%.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB056",
+      "section": "Điện trở và mã màu",
+      "question": "Điện trở nâu đen đỏ vàng bằng bao nhiêu?",
+      "answer": "Nâu=1, đen=0, đỏ nhân 10² và vàng ±5%: 10 × 100 = 1000 Ω = 1 kΩ, ±5%.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB057",
+      "section": "Điện trở và mã màu",
+      "question": "Dung sai 5% của điện trở 1 kΩ là bao nhiêu?",
+      "answer": "±5% của 1 kΩ là ±50 Ω; dải danh định là 950–1050 Ω.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB058",
+      "section": "Điện trở và mã màu",
+      "question": "Tại sao không chạm cả hai tay vào đầu que đo điện trở lớn?",
+      "answer": "Điện trở cơ thể có thể mắc song song với linh kiện và làm phép đo điện trở lớn sai lệch.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB059",
+      "section": "Điện trở và mã màu",
+      "question": "Đo điện trở trên mạch có linh kiện song song có đúng giá trị riêng không?",
+      "answer": "Không nhất thiết. Các nhánh song song tạo đường dẫn khác nên phép đo tại chỗ có thể thấp hơn trị số riêng của điện trở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB060",
+      "section": "Điện trở và mã màu",
+      "question": "Khi đo điện trở hiện O.L có thể kết luận ngay điện trở đứt không?",
+      "answer": "Không. O.L có thể do hở mạch, vượt thang hoặc tiếp xúc chưa đúng. Hãy kiểm tra jack, hai đầu que, thang đo và trạng thái mạch trước.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB061",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Tụ điện lưu trữ năng lượng dưới dạng nào?",
+      "answer": "Tụ lưu trữ năng lượng trong điện trường giữa hai bản cực.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB062",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Công thức điện tích trên tụ là gì?",
+      "answer": "Q = C × U, trong đó Q là coulomb, C là fara và U là vôn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB063",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Công thức năng lượng tích trong tụ điện là gì?",
+      "answer": "W = ½ × C × U², đơn vị jun (J).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB064",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Cách đọc mã tụ gốm 104 là gì?",
+      "answer": "104 nghĩa là 10 × 10⁴ pF = 100.000 pF = 100 nF = 0,1 µF.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB065",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Tụ 103 có điện dung bằng bao nhiêu?",
+      "answer": "103 nghĩa là 10 × 10³ pF = 10 nF = 0,01 µF.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB066",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Tụ 102 có điện dung bằng bao nhiêu?",
+      "answer": "102 nghĩa là 10 × 10² pF = 1 nF.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB067",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Tụ gốm có phân cực không?",
+      "answer": "Phần lớn tụ gốm thông dụng không phân cực; vẫn phải kiểm tra thông số và điện áp định mức.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB068",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Tụ hóa có phân cực không?",
+      "answer": "Có. Tụ hóa nhôm thông dụng có cực dương và cực âm; dải/vạch trên thân thường đánh dấu cực âm.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB069",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Đo điện dung bằng DMM chọn thang nào?",
+      "answer": "Ngắt nguồn, xả điện tụ đúng cách rồi chọn chế độ C/capacitance; nối que vào hai chân tụ theo hướng dẫn thiết bị.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB070",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Tại sao tụ có thể làm sai phép đo điện trở?",
+      "answer": "Tụ đang nạp/xả làm số đo Ω biến thiên; điện dung và điện trở rò phải được đánh giá bằng phép đo phù hợp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB071",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Dung kháng của tụ điện tính thế nào?",
+      "answer": "Độ lớn dung kháng: Xc = 1/(2πfC), đơn vị Ω với f tính bằng Hz và C bằng F.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB072",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Khi tần số tăng thì dung kháng tụ thay đổi ra sao?",
+      "answer": "Theo Xc = 1/(2πfC), dung kháng giảm khi tần số tăng và C không đổi.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB073",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Tại sao tụ chặn dòng một chiều sau khi nạp?",
+      "answer": "Ở trạng thái DC ổn định lý tưởng, điện áp trên tụ không đổi nên i = C × dU/dt = 0; tụ thực vẫn có dòng rò.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB074",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Hai tụ mắc song song có điện dung tương đương thế nào?",
+      "answer": "Ceq = C1 + C2 + … khi các tụ mắc song song.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB075",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Hai tụ mắc nối tiếp có điện dung tương đương thế nào?",
+      "answer": "1/Ceq = 1/C1 + 1/C2 + … với các tụ mắc nối tiếp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB076",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Cuộn cảm lưu trữ năng lượng dưới dạng nào?",
+      "answer": "Cuộn cảm lưu năng lượng trong từ trường do dòng điện tạo ra.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB077",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Công thức điện áp trên cuộn cảm lý tưởng là gì?",
+      "answer": "uL = L × di/dt, với L tính bằng henry (H).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB078",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Cảm kháng của cuộn cảm tính thế nào?",
+      "answer": "Độ lớn cảm kháng: XL = 2πfL, đơn vị Ω.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB079",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Khi tần số tăng thì cảm kháng cuộn cảm thay đổi ra sao?",
+      "answer": "XL tăng tỉ lệ với f nếu L không đổi.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB080",
+      "section": "Tụ điện và cuộn cảm",
+      "question": "Dùng thang Ω kiểm tra cuộn cảm 10 mH đo được đại lượng gì?",
+      "answer": "Thang Ω đo điện trở thuần của dây quấn, không đo trực tiếp độ tự cảm 10 mH. Cần thiết bị/chế độ L để đo độ tự cảm.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB081",
+      "section": "DMM và breadboard",
+      "question": "DMM là thiết bị gì?",
+      "answer": "DMM là đồng hồ vạn năng số; tùy thiết bị có thể đo điện áp, dòng điện, điện trở, thông mạch, diode và điện dung.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB082",
+      "section": "DMM và breadboard",
+      "question": "Cổng COM trên đồng hồ vạn năng dùng cho que nào?",
+      "answer": "Cổng COM là đầu tham chiếu chung, thông thường cắm jack que đen.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB083",
+      "section": "DMM và breadboard",
+      "question": "Cổng VΩ trên DMM dùng để làm gì?",
+      "answer": "Thường dùng cho que đỏ khi đo điện áp, điện trở, thông mạch và diode; kiểm tra ký hiệu chính xác trên thiết bị.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB084",
+      "section": "DMM và breadboard",
+      "question": "Có nên dùng cổng đo A để đo điện áp không?",
+      "answer": "Không. Nhầm cổng dòng điện A/mA sang phép đo áp có thể gây ngắn mạch; phải chọn đúng cổng VΩ và thang V.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB085",
+      "section": "DMM và breadboard",
+      "question": "Hai que của DMM đo điện áp như thế nào?",
+      "answer": "Đo điện áp bằng cách đặt hai que song song giữa hai điểm cần đo; số hiển thị là chênh lệch điện thế theo chiều que đỏ trừ que đen.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB086",
+      "section": "DMM và breadboard",
+      "question": "Đảo que đo DCV thì kết quả thay đổi ra sao?",
+      "answer": "Nếu mạch không đổi, đảo que đỏ–đen làm đổi dấu chênh lệch điện áp hiển thị.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB087",
+      "section": "DMM và breadboard",
+      "question": "Nếu đo cùng một nút bằng DCV thì kết quả gì?",
+      "answer": "Nếu hai que thật sự tiếp xúc cùng nút có điện thế xác định, chênh lệch lý tưởng là 0 V. Đây khác với thiếu tiếp xúc.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB088",
+      "section": "DMM và breadboard",
+      "question": "Chế độ Ω trên DMM dùng để đo gì?",
+      "answer": "Dùng để đo điện trở trong điều kiện đã ngắt nguồn ngoài và xử lý năng lượng còn lưu.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB089",
+      "section": "DMM và breadboard",
+      "question": "Chế độ thông mạch trên DMM có ý nghĩa gì?",
+      "answer": "Đồng hồ phát tín hiệu hoặc hiển thị khi điện trở đường dẫn nằm dưới ngưỡng do từng thiết bị quy định.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB090",
+      "section": "DMM và breadboard",
+      "question": "Chế độ đo diode trên DMM cho kết quả gì?",
+      "answer": "Thường hiển thị sụt áp thuận của tiếp giáp dưới dòng thử nhỏ; đo ngược thường OL nếu không dẫn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB091",
+      "section": "DMM và breadboard",
+      "question": "Chế độ C trên DMM dùng đo đại lượng nào?",
+      "answer": "Đo điện dung của tụ theo phương pháp và dải đo mà đồng hồ hỗ trợ.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB092",
+      "section": "DMM và breadboard",
+      "question": "DMM hiện OFF có nghĩa gì?",
+      "answer": "Núm chức năng đang tắt; cần chọn đúng chức năng trước khi kỳ vọng giá trị đo.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB093",
+      "section": "DMM và breadboard",
+      "question": "O.L trên đồng hồ vạn năng có nghĩa gì?",
+      "answer": "OL/O.L thường là hở mạch hoặc vượt giới hạn thang đo tùy chế độ, không tự chứng minh linh kiện bị đứt.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB094",
+      "section": "DMM và breadboard",
+      "question": "Tại sao số đo DMM không ổn định?",
+      "answer": "Có thể do điểm chạm lỏng, mạch dao động, tụ đang nạp/xả, sai thang, nhiễu hoặc đặc tính thiết bị.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB095",
+      "section": "DMM và breadboard",
+      "question": "Tại sao chọn sai thang đo làm kết quả vô nghĩa?",
+      "answer": "Mỗi thang dùng phương pháp kích đo/đọc khác nhau; giá trị chỉ có ý nghĩa khi đúng đại lượng, cổng và điều kiện an toàn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB096",
+      "section": "DMM và breadboard",
+      "question": "Breadboard là gì?",
+      "answer": "Breadboard là bảng cắm thử cho phép nối linh kiện và dây không cần hàn, nhờ các lá kim loại liên thông bên dưới lỗ.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB097",
+      "section": "DMM và breadboard",
+      "question": "Các lỗ trên một hàng breadboard có nối với nhau không?",
+      "answer": "Trên loại breadboard thông dụng, mỗi cụm năm lỗ cùng hàng trong một nửa bảng được nối chung; phải kiểm tra đúng bố cục bảng đang dùng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB098",
+      "section": "DMM và breadboard",
+      "question": "Hai bên rãnh giữa breadboard có nối sẵn không?",
+      "answer": "Không. Rãnh giữa thường tách hai nhóm lỗ, thích hợp cắm IC dạng DIP; cần dây nối nếu muốn kết nối qua rãnh.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB099",
+      "section": "DMM và breadboard",
+      "question": "Thanh nguồn đỏ xanh trên breadboard có luôn liền mạch không?",
+      "answer": "Không chắc. Một số thanh nguồn bị chia đoạn; phải kiểm tra sơ đồ hoặc dùng thông mạch khi chưa cấp nguồn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB100",
+      "section": "DMM và breadboard",
+      "question": "Đặt hai chân điện trở vào cùng một nút breadboard sẽ ra sao?",
+      "answer": "Hai chân trở bị nối tắt về cùng nút, nên không còn phần tử có điện áp đặt ngang nó; cần đặt chân vào hai nút khác nhau.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 3–7",
+      "review": "curated"
+    },
+    {
+      "id": "KB101",
+      "section": "Diode và phép đo diode",
+      "question": "Diode bán dẫn là gì?",
+      "answer": "Diode p–n là linh kiện hai cực thường dẫn mạnh hơn theo chiều thuận so với chiều ngược.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB102",
+      "section": "Diode và phép đo diode",
+      "question": "Cực Anode ký hiệu gì?",
+      "answer": "Anode ký hiệu A; khi diode silicon phân cực thuận, A thường có điện thế cao hơn K.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB103",
+      "section": "Diode và phép đo diode",
+      "question": "Cực Cathode ký hiệu gì?",
+      "answer": "Cathode ký hiệu K; với nhiều diode thân trụ, vạch trên thân chỉ phía Cathode.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB104",
+      "section": "Diode và phép đo diode",
+      "question": "Diode silicon sụt áp thuận khoảng bao nhiêu?",
+      "answer": "Trong điều kiện đo thông dụng, diode silicon có Vf khoảng 0,6–0,8 V, thay đổi theo dòng thử và nhiệt độ.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB105",
+      "section": "Diode và phép đo diode",
+      "question": "Diode germani sụt áp thuận khoảng bao nhiêu?",
+      "answer": "Diode germani thường có sụt áp thuận thấp hơn silicon, khoảng 0,2–0,3 V ở dòng thử phù hợp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB106",
+      "section": "Diode và phép đo diode",
+      "question": "Cách đo thuận diode bằng DMM là gì?",
+      "answer": "Chọn thang diode, que đỏ vào Anode và que đen vào Cathode, sau đó đọc sụt áp thuận nếu tiếp giáp dẫn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB107",
+      "section": "Diode và phép đo diode",
+      "question": "Cách đo ngược diode bằng DMM là gì?",
+      "answer": "Giữ thang diode, đảo hai que: đỏ vào Cathode và đen vào Anode; diode tốt thường hiện OL ở mức áp thử thông dụng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB108",
+      "section": "Diode và phép đo diode",
+      "question": "Nếu diode hiện gần 0 V ở cả hai chiều đo thì sao?",
+      "answer": "Dấu hiệu có thể chập tiếp giáp; cần kiểm tra điều kiện mạch và tháo khỏi nhánh song song nếu cần.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB109",
+      "section": "Diode và phép đo diode",
+      "question": "Nếu diode hiện O.L ở cả hai chiều đo thì sao?",
+      "answer": "Có thể diode hở/đứt hoặc tiếp xúc sai; xác minh thang đo, cổng và điểm chạm trước khi kết luận.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB110",
+      "section": "Diode và phép đo diode",
+      "question": "Diode chỉnh lưu 1N4007 thường dùng cho việc gì?",
+      "answer": "Thường dùng chỉnh lưu nguồn tần số thấp và các ứng dụng theo định mức điện áp, dòng được nhà sản xuất quy định.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB111",
+      "section": "Diode và phép đo diode",
+      "question": "Diode 1N4148 dùng trong bài thực hành để làm gì?",
+      "answer": "Là diode tín hiệu chuyển mạch nhanh được đưa vào nhóm kiểm tra hai chiều trong Bảng 1.2.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB112",
+      "section": "Diode và phép đo diode",
+      "question": "Diode Zener khác diode chỉnh lưu như thế nào?",
+      "answer": "Zener được thiết kế làm việc ở vùng đánh thủng ngược có kiểm soát để ghim điện áp; diode chỉnh lưu thường dùng dẫn thuận và chặn ngược.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB113",
+      "section": "Diode và phép đo diode",
+      "question": "Diode Zener 5.1 V có nghĩa là gì?",
+      "answer": "Điện áp Zener danh định khoảng 5,1 V ở điều kiện dòng kiểm tra theo datasheet, không phải luôn chính xác 5,1 V ở mọi dòng tải.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB114",
+      "section": "Diode và phép đo diode",
+      "question": "Đo ngược Zener 5.1 V bằng thang diode có luôn hiện 5.1 V không?",
+      "answer": "Không. Nhiều DMM không cấp đủ điện áp thử để vào vùng Zener, nên có thể hiện OL dù diode tốt.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB115",
+      "section": "Diode và phép đo diode",
+      "question": "Làm thế nào kiểm tra điện áp Zener danh định?",
+      "answer": "Dùng mạch nguồn DC có điện trở hạn dòng phù hợp, mắc Zener phân cực ngược và đo điện áp trên Zener theo quy trình an toàn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB116",
+      "section": "Diode và phép đo diode",
+      "question": "Tại sao phải giới hạn dòng khi thử Zener?",
+      "answer": "Để ngăn dòng và công suất Zener vượt giá trị cho phép khi điện áp nguồn tăng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB117",
+      "section": "Diode và phép đo diode",
+      "question": "Có thể kết luận Zener hỏng chỉ vì chiều ngược báo OL không?",
+      "answer": "Không. Ở thang diode, OL chiều ngược có thể bình thường vì điện áp thử không đạt điện áp Zener.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB118",
+      "section": "Diode và phép đo diode",
+      "question": "Bảng 1.2 dùng để ghi dữ liệu gì?",
+      "answer": "Ghi linh kiện diode, sụt áp chiều thuận, kết quả chiều ngược và đánh giá chất lượng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB119",
+      "section": "Diode và phép đo diode",
+      "question": "Tại sao diode dẫn thuận nhưng chặn ngược?",
+      "answer": "Thế hàng rào và vùng nghèo của tiếp giáp p–n thay đổi khi phân cực, làm dòng thuận và dòng ngược khác nhau rất nhiều.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB120",
+      "section": "Diode và phép đo diode",
+      "question": "Đảo cực một diode trong cầu chỉnh lưu có thể gây gì?",
+      "answer": "Có thể làm mạch chỉnh lưu sai dạng sóng, mất nửa chu kỳ hoặc gây đường dẫn không mong muốn; cần kiểm tra đúng chiều K.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 5–8",
+      "review": "curated"
+    },
+    {
+      "id": "KB121",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Mạch chỉnh lưu cầu toàn chu kỳ dùng mấy diode?",
+      "answer": "Mạch cầu chỉnh lưu tiêu chuẩn dùng bốn diode để chỉnh lưu cả hai bán kỳ AC.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB122",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Vai trò của cầu chỉnh lưu là gì?",
+      "answer": "Biến điện áp AC đầu vào thành điện áp có cực tính đầu ra một chiều dạng nhấp nhô.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB123",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Tần số gợn sóng của cầu chỉnh lưu toàn chu kỳ là bao nhiêu?",
+      "answer": "Với điện áp sin tần số f, gợn sóng cơ bản sau chỉnh lưu toàn kỳ là 2f, nếu điều kiện mạch lý tưởng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB124",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Nguồn 50 Hz qua cầu chỉnh lưu có gợn sóng bao nhiêu Hz?",
+      "answer": "Với chỉnh lưu toàn kỳ, tần số gợn sóng cơ bản khoảng 100 Hz.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB125",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Tụ lọc nguồn sau cầu diode có nhiệm vụ gì?",
+      "answer": "Tụ nạp gần đỉnh điện áp và xả qua tải giữa các đỉnh, làm giảm độ gợn của điện áp DC.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB126",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Tăng điện dung lọc nguồn ảnh hưởng thế nào đến ripple?",
+      "answer": "Khi tải, tần số và điều kiện khác không đổi, tăng C thường giảm điện áp gợn sóng; cần xét dòng nạp và định mức linh kiện.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB127",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Mạch chỉnh lưu cầu thường có mấy diode dẫn trong mỗi bán kỳ?",
+      "answer": "Trong cấu hình cầu điển hình, hai diode dẫn nối tiếp trong mỗi bán kỳ.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB128",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Điện áp đỉnh 9 VAC RMS lý tưởng là bao nhiêu?",
+      "answer": "Với sóng sin 9 Vrms, đỉnh lý tưởng là 9√2 ≈ 12,7 V trước khi trừ sụt áp trên diode và các tổn hao khác.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB129",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Tại sao điện áp sau lọc có thể lớn hơn 9 V RMS?",
+      "answer": "Tụ lọc nạp gần đỉnh sóng (~12,7 V với 9 Vrms sin), trừ sụt diode và tải, nên DC sau lọc có thể cao hơn số RMS đầu vào.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB130",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Tụ lọc 10 microfarad và 1000 microfarad khác nhau điều gì?",
+      "answer": "Trong cùng mạch, 1000 µF thường san phẳng tốt hơn 10 µF nhưng làm thay đổi dòng nạp, kích thước và năng lượng tích trữ.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB131",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "DC Coupling trên máy hiện sóng để làm gì?",
+      "answer": "Hiển thị cả thành phần DC và AC của tín hiệu, phù hợp quan sát điện áp tổng trên tải.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB132",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "AC Coupling trên máy hiện sóng để làm gì?",
+      "answer": "Loại bỏ thành phần DC tại đầu vào kênh, giúp quan sát thành phần gợn nhỏ hơn; phải hiểu ảnh hưởng của mạch ghép.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB133",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Điện áp ripple đỉnh đỉnh là gì?",
+      "answer": "Vripple,pp là chênh lệch giữa đỉnh cao nhất và thấp nhất của thành phần điện áp gợn trong chu kỳ đo.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB134",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Tại sao phải đo riêng CH1 và CH2 ở mạch cầu?",
+      "answer": "Để tránh nối ngắn qua kẹp mass chung của oscilloscope khi điểm mass của đầu vào AC và đầu ra DC khác nhau.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB135",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Bảng 1.3 ghi những gì?",
+      "answer": "Ghi điện áp đỉnh, điện áp DC trung bình, biên độ gợn và dạng sóng ứng với C = 0, 10, 100, 1000 µF.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB136",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Mạch ổn áp Zener dùng điện trở Rs để làm gì?",
+      "answer": "Rs hạn chế dòng từ nguồn và tạo sụt áp, bảo vệ Zener khi điện áp nguồn hoặc tải thay đổi.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB137",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Giá trị Rs trong bài khảo sát ổn áp Zener là bao nhiêu?",
+      "answer": "Theo Bài 1 – Phần 4, Rs = 220 Ω.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB138",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Giá trị tải RL trong bài ổn áp Zener là bao nhiêu?",
+      "answer": "Theo Bài 1 – Phần 4, RL = 1 kΩ.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB139",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Nguồn Vin được thay đổi thế nào trong Bảng 1.4?",
+      "answer": "Tài liệu yêu cầu quét Vin từ 0 đến 12 V theo các mức trong bảng và đo Vout, IL, sụt áp trên Rs.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB140",
+      "section": "Chỉnh lưu cầu và Zener",
+      "question": "Công thức dòng qua tải ổn áp Zener là gì?",
+      "answer": "IL = Vout/RL; nếu Vout tính bằng V và RL tính bằng Ω thì IL tính bằng A.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 8–12",
+      "review": "curated"
+    },
+    {
+      "id": "KB141",
+      "section": "BJT và khuếch đại",
+      "question": "BJT là gì?",
+      "answer": "BJT là transistor lưỡng cực có ba cực Base (B), Collector (C), Emitter (E), điều khiển dòng collector bằng dòng base trong vùng khuếch đại.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB142",
+      "section": "BJT và khuếch đại",
+      "question": "Transistor NPN và PNP khác nhau như thế nào?",
+      "answer": "NPN và PNP có thứ tự miền bán dẫn và chiều phân cực làm việc khác nhau; chọn đúng cực tính khi đo và cấp nguồn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB143",
+      "section": "BJT và khuếch đại",
+      "question": "Ba cực của BJT có tên gì?",
+      "answer": "Base (B), Collector (C) và Emitter (E).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB144",
+      "section": "BJT và khuếch đại",
+      "question": "Điều kiện phân cực BJT NPN vùng tích cực là gì?",
+      "answer": "Tiếp giáp B–E phân cực thuận, B–C phân cực ngược; với silicon VBE thường khoảng 0,6–0,7 V.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB145",
+      "section": "BJT và khuếch đại",
+      "question": "Hệ số beta hFE của BJT là gì?",
+      "answer": "β hoặc hFE là tỉ số IC/IB trong điều kiện đo phù hợp; không phải hằng số cho mọi điểm làm việc.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB146",
+      "section": "BJT và khuếch đại",
+      "question": "Công thức dòng collector vùng tích cực BJT là gì?",
+      "answer": "IC ≈ β × IB khi transistor hoạt động ở vùng tích cực và các điều kiện mô hình phù hợp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB147",
+      "section": "BJT và khuếch đại",
+      "question": "Dòng emitter có quan hệ gì với dòng base và collector?",
+      "answer": "IE = IB + IC theo định luật nút dòng điện.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB148",
+      "section": "BJT và khuếch đại",
+      "question": "BJT vùng cutoff có đặc điểm gì?",
+      "answer": "Dòng collector rất nhỏ, transistor gần trạng thái công tắc mở.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB149",
+      "section": "BJT và khuếch đại",
+      "question": "BJT vùng bão hòa có đặc điểm gì?",
+      "answer": "Cả hai tiếp giáp có thể phân cực thuận; VCE thường nhỏ, dòng do mạch ngoài quyết định nhiều hơn β.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB150",
+      "section": "BJT và khuếch đại",
+      "question": "Điện áp VCE bão hòa BJT thường khoảng bao nhiêu?",
+      "answer": "Trong ví dụ silicon chuyển mạch, VCE(sat) thường cỡ 0,1–0,3 V tùy dòng và linh kiện; tài liệu lấy khoảng 0,2 V.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB151",
+      "section": "BJT và khuếch đại",
+      "question": "DMM xác định chân Base của NPN thế nào?",
+      "answer": "Ở thang diode, chân Base là chân mà khi đặt que đỏ vào đó, que đen lần lượt tới hai chân kia đều đo được tiếp giáp thuận.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB152",
+      "section": "BJT và khuếch đại",
+      "question": "DMM xác định chân Base của PNP thế nào?",
+      "answer": "Ở thang diode, chân Base thường là chân chung có que đen, còn que đỏ lần lượt chạm hai chân kia cho sụt áp thuận.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB153",
+      "section": "BJT và khuếch đại",
+      "question": "BC547 thuộc loại transistor nào?",
+      "answer": "BC547 là transistor NPN dùng trong Bài 2.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB154",
+      "section": "BJT và khuếch đại",
+      "question": "BC557 thuộc loại transistor nào?",
+      "answer": "BC557 là transistor PNP dùng trong Bài 2.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB155",
+      "section": "BJT và khuếch đại",
+      "question": "Điểm làm việc tĩnh Q của BJT là gì?",
+      "answer": "Là bộ giá trị điện áp và dòng DC ở trạng thái không có tín hiệu nhỏ, dùng đánh giá vùng hoạt động của transistor.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB156",
+      "section": "BJT và khuếch đại",
+      "question": "Vì sao mạch phân cực cầu phân áp có điện trở RE?",
+      "answer": "RE tạo phản hồi âm DC, giảm độ nhạy điểm Q với thay đổi nhiệt độ và β.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB157",
+      "section": "BJT và khuếch đại",
+      "question": "Công thức điện áp VCE từ VC và VE là gì?",
+      "answer": "VCE = VC − VE, cùng hệ quy chiếu mass.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB158",
+      "section": "BJT và khuếch đại",
+      "question": "Tính dòng emitter từ VE và RE thế nào?",
+      "answer": "IE ≈ VE/RE khi emitter nối tới mass qua RE và bỏ qua các yếu tố phụ của mạch.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB159",
+      "section": "BJT và khuếch đại",
+      "question": "Mạch BJT điều khiển LED trong bài dùng nguồn bao nhiêu?",
+      "answer": "Bài 2 – Phần 3 dùng nguồn 5 V, LED với RC = 220 Ω và điện trở base RB = 10 kΩ.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB160",
+      "section": "BJT và khuếch đại",
+      "question": "Vì sao phải có điện trở RB ở cực Base?",
+      "answer": "RB hạn chế dòng vào tiếp giáp B–E và giúp kiểm soát trạng thái điều khiển transistor.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 13–18",
+      "review": "curated"
+    },
+    {
+      "id": "KB161",
+      "section": "JFET và MOSFET",
+      "question": "FET là gì?",
+      "answer": "FET là transistor hiệu ứng trường, dùng điện áp cổng để điều khiển độ dẫn kênh giữa Drain và Source.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB162",
+      "section": "JFET và MOSFET",
+      "question": "Ba cực của FET có tên gì?",
+      "answer": "Gate (G), Drain (D) và Source (S).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB163",
+      "section": "JFET và MOSFET",
+      "question": "JFET khác MOSFET như thế nào?",
+      "answer": "JFET điều khiển kênh bằng tiếp giáp p–n phân cực ngược; MOSFET có lớp oxide cách điện ở cổng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB164",
+      "section": "JFET và MOSFET",
+      "question": "Vì sao MOSFET có trở kháng vào cao?",
+      "answer": "Lớp oxide cách ly gate làm dòng DC vào cổng rất nhỏ trong điều kiện bình thường.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB165",
+      "section": "JFET và MOSFET",
+      "question": "JFET J113 dùng trong phần nào của bài thực hành?",
+      "answer": "Bài 3 nghiên cứu nhận diện J113 và mạch phân cực tự cấp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB166",
+      "section": "JFET và MOSFET",
+      "question": "MOSFET 2N7000 dùng trong thí nghiệm nào?",
+      "answer": "Bài 3 dùng 2N7000 kiểm tra linh kiện và làm mạch tự bật đèn khi trời tối với LDR.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB167",
+      "section": "JFET và MOSFET",
+      "question": "Công thức điện áp VGS là gì?",
+      "answer": "VGS = VG − VS với điện áp cùng tham chiếu.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB168",
+      "section": "JFET và MOSFET",
+      "question": "Công thức điện áp VDS là gì?",
+      "answer": "VDS = VD − VS với điện áp cùng tham chiếu.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB169",
+      "section": "JFET và MOSFET",
+      "question": "Vì sao VGS của JFET tự phân cực có thể âm?",
+      "answer": "Khi gate gần 0 V và source tăng dương do dòng qua RS, VGS = VG − VS ≈ −VS.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB170",
+      "section": "JFET và MOSFET",
+      "question": "Công thức ID từ điện trở Source trong mạch JFET là gì?",
+      "answer": "ID ≈ VS/RS nếu dòng cổng gần 0 và điện trở RS nối về mass.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB171",
+      "section": "JFET và MOSFET",
+      "question": "Điện trở RG trong mạch JFET J113 có giá trị bao nhiêu?",
+      "answer": "Theo Bài 3 – Phần 2, RG = 1 MΩ nối Gate về mass.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB172",
+      "section": "JFET và MOSFET",
+      "question": "Nguồn VDD trong bài mạch JFET tự phân cực là bao nhiêu?",
+      "answer": "Theo Bài 3 – Phần 2, VDD = 12 V.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB173",
+      "section": "JFET và MOSFET",
+      "question": "Cảm biến LDR hoạt động dựa trên nguyên lý gì?",
+      "answer": "Điện trở của quang trở thay đổi theo ánh sáng: trong loại LDR thông thường, sáng hơn thì điện trở giảm.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB174",
+      "section": "JFET và MOSFET",
+      "question": "Khi chiếu sáng mạnh vào LDR thì điện trở thường thay đổi ra sao?",
+      "answer": "Điện trở LDR giảm khi cường độ sáng tăng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB175",
+      "section": "JFET và MOSFET",
+      "question": "Khi che tối LDR thì điện trở thường thay đổi ra sao?",
+      "answer": "Điện trở LDR tăng, làm thay đổi điện áp phân áp đưa tới cổng MOSFET.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB176",
+      "section": "JFET và MOSFET",
+      "question": "Vai trò biến trở 100 kΩ trong mạch đèn tự bật là gì?",
+      "answer": "Tạo cầu phân áp cùng LDR và cho phép điều chỉnh ngưỡng bật/tắt MOSFET.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB177",
+      "section": "JFET và MOSFET",
+      "question": "Trong mạch cảm biến bài 3 khi trời sáng LED như thế nào?",
+      "answer": "Theo sơ đồ Bài 3 – Phần 3, LDR xuống mass có điện trở nhỏ khi sáng nên VGS giảm và LED tắt.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB178",
+      "section": "JFET và MOSFET",
+      "question": "Trong mạch cảm biến bài 3 khi trời tối LED như thế nào?",
+      "answer": "LDR tăng điện trở khi tối, kéo điện áp gate lên cao hơn ngưỡng dẫn và LED có thể sáng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB179",
+      "section": "JFET và MOSFET",
+      "question": "Vì sao không suy ra chân MOSFET chỉ từ hình dáng?",
+      "answer": "Chân G/D/S phụ thuộc mã linh kiện và quy ước nhìn mặt; phải kiểm tra datasheet hoặc sơ đồ chân đúng model.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB180",
+      "section": "JFET và MOSFET",
+      "question": "Điện áp ngưỡng VGS(th) có phải điện áp MOSFET dẫn mạnh không?",
+      "answer": "Không. VGS(th) là điều kiện dẫn rất nhỏ theo chuẩn datasheet; để dẫn tải đáng kể phải xét đặc tính và điện áp cổng phù hợp.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 19–24",
+      "review": "curated"
+    },
+    {
+      "id": "KB181",
+      "section": "SCR và báo cáo thực hành",
+      "question": "SCR là linh kiện gì?",
+      "answer": "SCR là thyristor chỉnh lưu có điều khiển, thường có ba cực Anode, Cathode và Gate, có khả năng tự duy trì dẫn khi được kích.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB182",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Ba cực của SCR tên là gì?",
+      "answer": "Anode (A), Cathode (K) và Gate (G).",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB183",
+      "section": "SCR và báo cáo thực hành",
+      "question": "SCR trong bài thí nghiệm mang mã linh kiện nào?",
+      "answer": "Bài 3 – Phần 4 dùng SCR C106D hoặc BT169.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB184",
+      "section": "SCR và báo cáo thực hành",
+      "question": "SCR được kích dẫn như thế nào?",
+      "answer": "Khi phân cực A–K thuận và dòng kích Gate đủ theo điều kiện, SCR chuyển sang trạng thái dẫn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB185",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Vì sao SCR vẫn dẫn sau khi thả nút Gate?",
+      "answer": "Do cơ chế hồi tiếp tái sinh bên trong, SCR tự duy trì dẫn nếu dòng Anode còn trên dòng duy trì IH.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB186",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Dòng duy trì IH của SCR là gì?",
+      "answer": "IH là dòng Anode tối thiểu để SCR tiếp tục dẫn sau khi đã được kích, theo điều kiện datasheet.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB187",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Làm sao để tắt SCR đang dẫn?",
+      "answer": "Giảm dòng Anode xuống dưới IH hoặc ngắt nguồn cung cấp; làm theo quy trình mạch và an toàn, không tự ý chập trực tiếp nguồn.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB188",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Điện trở hạn dòng Gate trong bài SCR có giá trị bao nhiêu?",
+      "answer": "Bài 3 – Phần 4 dùng điện trở 1 kΩ nối tiếp nút nhấn đưa xung kích vào Gate.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB189",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Tải LED của bài SCR dùng điện trở bao nhiêu?",
+      "answer": "Theo sơ đồ bài, LED mắc nối tiếp điện trở hạn dòng 220 Ω.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB190",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Trước khi nhấn nút kích SCR LED có trạng thái gì?",
+      "answer": "Theo sơ đồ bài, khi chưa có xung Gate, SCR khóa và LED tắt.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB191",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Sau khi nhấn Gate và thả tay LED có trạng thái gì?",
+      "answer": "Nếu dòng tải lớn hơn IH, SCR tiếp tục dẫn và LED vẫn sáng sau khi thả nút.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB192",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Bảng 3.4 ghi những đại lượng nào?",
+      "answer": "Ghi trạng thái nút Gate, điện áp VAK, điện áp VGK và trạng thái LED cho bốn pha thí nghiệm.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB193",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Trang bìa báo cáo thực hành cần những mục nào?",
+      "answer": "Ghi trường, khoa, môn học, họ tên, mã sinh viên, lớp và nhóm thực hành.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB194",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Báo cáo phải ghi số đo lý thuyết hay thực tế?",
+      "answer": "Phải ghi trung thực số đo thực tế; phần tính lý thuyết trình bày riêng để so sánh, không được thay số đo bằng số giả.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB195",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Bảng 1.1 ghi những cột nào?",
+      "answer": "Gồm tên linh kiện, giá trị lý thuyết, dung sai, giá trị đo thực tế, chênh lệch và đánh giá chất lượng.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB196",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Độ lệch tương đối phần trăm tính như thế nào?",
+      "answer": "Độ lệch (%) = |giá trị đo − giá trị tham chiếu|/|giá trị tham chiếu| × 100% khi giá trị tham chiếu khác 0.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB197",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Tại sao cần phác thảo dạng sóng oscilloscope trong báo cáo?",
+      "answer": "Dạng sóng giúp đánh giá chức năng chỉnh lưu/lọc và đối chiếu với các trị số điện áp đo được.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB198",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Khi kết quả khác lý thuyết thì ghi thế nào?",
+      "answer": "Ghi nguyên số đo, nêu sai lệch, kiểm tra điều kiện đo và giải thích nguyên nhân có thể; không tự sửa số để giống lý thuyết.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB199",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Có được coi tiến độ đã đo là điểm đạt của giảng viên không?",
+      "answer": "Không. Ghi số liệu và tiến độ chỉ là bằng chứng thao tác mô phỏng; điểm đạt cần quy trình xác nhận của giảng viên/hệ thống có thẩm quyền.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    },
+    {
+      "id": "KB200",
+      "section": "SCR và báo cáo thực hành",
+      "question": "Nếu chưa có số liệu thực tế thì Excel có tự điền số không?",
+      "answer": "Không. File xuất phải để trống hoặc ghi “chưa đo” đối với trường hợp chưa có phép đo hợp lệ; không bịa số liệu.",
+      "source": "Tài liệu hướng dẫn thực hành Vật lý bán dẫn & Linh kiện, trang 25–28",
+      "review": "curated"
+    }
+  ]
+}

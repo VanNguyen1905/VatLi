@@ -1,0 +1,46 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><style>
+html,body{height:100%;width:100%;overflow:hidden;background:transparent;margin:0}canvas{display:block}#fallback{position:absolute;inset:0;display:none;place-items:center;font:12px Segoe UI;color:#e2e8f0}
+</style></head><body><div id="fallback" aria-hidden="true">Đang dùng ảnh nền dự phòng</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+(function(){
+  const parentOrigin=location.origin;
+  const tell=(type)=>parent.postMessage({type},parentOrigin==='null'?'*':parentOrigin);
+  if(!window.THREE || !THREE.GLTFLoader){tell('utt-room-unavailable');return;}
+  let renderer,scene,camera,lookAt,clockStart=performance.now();
+  try{
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    scene=new THREE.Scene();scene.background=null;
+    camera=new THREE.PerspectiveCamera(46,innerWidth/innerHeight,.01,150);
+    renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+    renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
+    renderer.outputEncoding=THREE.sRGBEncoding;
+    document.body.appendChild(renderer.domElement);
+    scene.add(new THREE.HemisphereLight(0xddefff,0x7886a0,2.4));
+    const sun=new THREE.DirectionalLight(0xffffff,1.9);sun.position.set(10,18,9);scene.add(sun);
+    const blue=new THREE.DirectionalLight(0x5acfff,.9);blue.position.set(-9,8,-8);scene.add(blue);
+    const loader=new THREE.GLTFLoader();
+    loader.load('./lab-room.glb',gltf=>{
+      const room=gltf.scene;scene.add(room);
+      const box=new THREE.Box3().setFromObject(room);const center=box.getCenter(new THREE.Vector3());const size=box.getSize(new THREE.Vector3());
+      const scale=Math.max(size.x,size.y,size.z,2);
+      lookAt=center.clone();lookAt.y+=scale*.025;
+      const near=new THREE.Vector3(center.x+scale*.64, center.y+scale*.36,center.z+scale*.72);
+      const far=new THREE.Vector3(center.x+scale*1.45,center.y+scale*.76,center.z+scale*1.5);
+      camera.position.copy(far);camera.lookAt(lookAt);
+      clockStart=performance.now();tell('utt-room-ready');
+      function animate(time){
+        const t=reduced?1:Math.min(1,(time-clockStart)/3000);
+        const eased=1-Math.pow(1-t,3);
+        camera.position.lerpVectors(far,near,eased);
+        camera.lookAt(lookAt);
+        renderer.render(scene,camera);
+        if(!document.hidden)requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    },undefined,()=>tell('utt-room-unavailable'));
+    addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+  }catch{tell('utt-room-unavailable');}
+})();
+</script></body></html>

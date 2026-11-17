@@ -1,0 +1,44 @@
+/* UTT V7 — giao diện bổ sung; không thay đổi React Router, Firebase hay dữ liệu. */
+html.utt-v7-seen #utt-v5-intro{display:none!important;pointer-events:none!important}
+#utt-v5-intro .utt-v5-intro-note{display:none!important}
+#utt-v5-intro{background-image:linear-gradient(120deg,rgba(3,13,41,.92),rgba(4,31,83,.78) 48%,rgba(5,23,59,.45)),url('/utt-v7/campus.webp')!important;background-size:cover!important;background-position:center 65%!important}
+#utt-v5-intro .utt-v5-intro-logo{max-width:190px!important}
+/* Ảnh nền không có chữ bị cắt; phần nhận diện chính đặt thành nội dung HTML. */
+.utt-v5-hero{background-image:linear-gradient(90deg,rgba(1,13,49,.95) 0%,rgba(3,24,71,.91) 38%,rgba(3,31,74,.27) 91%),url('/utt-v7/campus.webp')!important;background-position:center 65%!important;background-size:cover!important}
+.utt-v5-hero::before{background-image:linear-gradient(90deg,rgba(1,13,49,.95),rgba(3,24,71,.88) 40%,rgba(3,31,74,.20) 90%),url('/utt-v7/campus.webp')!important;background-size:cover!important;background-position:center 58%!important}
+.utt-v5-hero{padding-top:clamp(110px,11vw,145px)!important}
+.utt-v7-hero-brand{position:absolute!important;left:clamp(24px,4vw,48px);top:clamp(20px,3vw,38px);z-index:2!important;display:flex!important;align-items:center!important;gap:13px!important;color:white!important;max-width:min(80%,390px)}
+.utt-v7-hero-brand img{width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(3,11,38,.38))}
+.utt-v7-hero-brand span{font-size:16px;font-weight:850;line-height:1.35;letter-spacing:.05em}
+.utt-v7-hero-brand small{display:block;font-size:11px;letter-spacing:.06em;color:#daeaff;margin-top:2px}
+/* Menu trái: hai liên kết UTT nằm dưới Lộ trình thực hành; không có nút nổi. */
+#utt-info-launcher{display:none!important}
+.utt-v7-menu{display:grid;gap:5px;margin:15px 0 13px;padding:14px 0 0;border-top:1px solid rgba(160,183,230,.20);font:inherit}
+.utt-v7-menu__caption{font-size:11px!important;letter-spacing:.10em!important;font-weight:850!important;color:#98add0!important;padding:0 13px 7px!important;margin:0!important;text-transform:uppercase}
+.utt-v7-menu__link{display:flex!important;align-items:center!important;gap:12px!important;min-height:49px!important;border-radius:12px!important;padding:10px 12px!important;color:#c6d6f3!important;font-size:14px!important;font-weight:620!important;text-decoration:none!important;background:transparent!important;line-height:1.35!important;transition:background .16s ease,color .16s ease}
+.utt-v7-menu__link:hover,.utt-v7-menu__link:focus-visible,.utt-v7-menu__link[aria-current=page]{background:rgba(92,91,235,.19)!important;color:#fff!important;outline-offset:2px}
+.utt-v7-menu__link svg{flex:none;width:21px;height:21px;stroke:#a68cff;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.utt-v7-menu__link span{min-width:0}
+/* Hai trang UTT thống nhất với sidebar website. */
+body.utt-v7-page{padding-left:278px;background:#080f22}
+body.utt-v7-page .sitebar{position:relative;height:auto;min-height:80px;margin:0;padding:15px 28px 15px 35px;border-bottom:1px solid rgba(255,255,255,.12);background:#0b142c}
+body.utt-v7-page .sitebar>.identity{display:none}
+body.utt-v7-page main{max-width:1300px;padding:0 clamp(18px,3.4vw,52px) 90px}
+body.utt-v7-page .hero{min-height:440px;margin-top:28px;align-items:center;border:1px solid rgba(116,168,235,.30);background-image:linear-gradient(90deg,rgba(2,16,53,.96),rgba(3,26,70,.86) 43%,rgba(2,35,75,.19) 100%),url('/utt-v7/campus.webp');background-size:cover;background-position:center 56%}
+body.utt-v7-page.utt-v7-nganh .hero{background-image:linear-gradient(90deg,rgba(2,16,53,.97),rgba(3,26,70,.89) 41%,rgba(2,35,75,.16) 100%),url('/utt-v7/semiconductor.webp')}
+body.utt-v7-page .hero::after{display:none}
+body.utt-v7-page .hero>div{max-width:800px}
+.utt-v7-side{position:fixed;inset:0 auto 0 0;width:278px;background:linear-gradient(170deg,#11172b 0%,#101a33 100%);border-right:1px solid #34405b;z-index:200;display:flex;flex-direction:column;color:white;box-shadow:4px 0 28px rgba(2,8,22,.14)}
+.utt-v7-side__brand{padding:20px 17px 18px;border-bottom:1px solid #2b3751;display:flex;gap:12px;align-items:center;font-size:15px;font-weight:900;line-height:1.25;color:#fff;text-decoration:none}
+.utt-v7-side__brand svg{flex:none;width:34px;height:34px;stroke:#a98aff;stroke-width:2;fill:none}
+.utt-v7-side__brand small{font-size:10px;font-weight:600;color:#a8bde4;display:block;margin-top:4px}
+.utt-v7-side__links{display:flex;flex-direction:column;gap:6px;padding:18px 13px}
+.utt-v7-side__links a{border-radius:12px;padding:13px 13px;min-height:46px;display:flex;align-items:center;gap:11px;text-decoration:none;color:#c5d6f4;font-size:14px;font-weight:650}
+.utt-v7-side__links a:hover,.utt-v7-side__links a[aria-current=page]{background:#202650;color:#fff}
+.utt-v7-side__links a span:first-child{display:inline-flex;align-items:center;justify-content:center;width:22px;color:#a98aff}
+.utt-v7-side__divider{border-top:1px solid #2b3751;margin:8px 14px 12px}
+.utt-v7-side__label{padding:0 24px;font-size:11px;letter-spacing:.08em;color:#92acd2;text-transform:uppercase;font-weight:800}
+.utt-v7-side__footer{margin-top:auto;padding:18px 24px;color:#94a8ce;font-size:12px;border-top:1px solid #2b3751}
+body.utt-v7-page .card{background:linear-gradient(165deg,#141f3b,#10182e)}
+@media(max-width:800px){body.utt-v7-page{padding-left:0}body.utt-v7-page .sitebar{margin-top:67px;padding:12px 16px}body.utt-v7-page main{padding:0 16px 60px}body.utt-v7-page .hero{min-height:350px;background-position:60% center;padding:30px 22px}.utt-v7-side{position:fixed;inset:0 0 auto 0;width:100%;height:67px;flex-direction:row;align-items:center;justify-content:space-between;overflow:auto}.utt-v7-side__brand{padding:10px 12px;border:0;font-size:12px}.utt-v7-side__brand svg{width:26px;height:26px}.utt-v7-side__brand small,.utt-v7-side__divider,.utt-v7-side__label,.utt-v7-side__footer{display:none}.utt-v7-side__links{flex-direction:row;align-items:center;padding:0 8px;gap:3px}.utt-v7-side__links a{font-size:11px;white-space:nowrap;min-height:36px;padding:8px}.utt-v7-side__links a span:first-child{display:none}}
+@media(prefers-reduced-motion:reduce){.utt-v7-menu__link{transition:none}}

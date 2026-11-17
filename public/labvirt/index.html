@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#08152F" />
+  <meta name="description" content="LABVIRT — Không gian thực hành linh kiện từ phòng Blender gốc, với đồng hồ DMM và sổ số liệu cục bộ." />
+  <title>LAB THỰC HÀNH | BỘ MÔN VẬT LÝ CÔNG NGHỆ</title>
+  <style>body{background:#061727;color:#ddecff}body.embed-mode .sidebar,body.embed-mode .topbar{display:none}body.embed-mode .right-shell{width:100%}</style>
+  <link rel="stylesheet" href="style.css?v=labvirt-v9-navy-portal" />
+  <link rel="stylesheet" href="ui/premium.css" />
+  <link rel="stylesheet" href="ui/catalog.css" />
+  <link rel="stylesheet" href="ui/experiment-hub.css" />
+  <script type="module" src="app.js?v=final-qa1"></script>
+  <script type="module" src="./live/studio-bridge.js"></script>
+</head>
+<body><script>if(new URLSearchParams(location.search).get('embed')==='1')document.body.classList.add('embed-mode');</script>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="/utt-v5/utt-icon.webp" alt="Biểu tượng bộ môn" width="48" height="48" /></div>
+        <div><strong>LAB THỰC HÀNH</strong><small>BỘ MÔN VẬT LÝ CÔNG NGHỆ</small></div>
+      </div>
+      <div class="side-section-title">KHÔNG GIAN HỌC TẬP</div>
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <button class="nav-link active" data-view="catalog"><span class="nav-emoji">◫</span> Thí nghiệm &amp; Lộ trình</button>
+        <button class="nav-link" data-view="mine"><span class="nav-emoji">◷</span> Thực hành của tôi</button>
+        <button class="nav-link" data-view="report"><span class="nav-emoji">▤</span> Kết quả &amp; Báo cáo</button>
+      </nav>
+      <div class="side-section-title side-middle">CHỌN PHẦN THỰC HÀNH</div>
+      <nav id="sidebarParts" class="side-parts" aria-label="Bốn phần thực hành"></nav>
+      <div class="sidebar-bottom"><span class="side-status-dot"></span> LÀM VIỆC CỤC BỘ <small>Phòng Blender gốc · Dụng cụ tương tác<br>3 bài · 11 phần thực hành</small></div>
+    </aside>
+
+    <div class="right-shell">
+      <header class="topbar">
+        <div class="breadcrumb"><span>LABVIRT / WORKSPACE</span><span class="slash">/</span><strong>BÀI 1 · LINH KIỆN THỤ ĐỘNG VÀ DIODE</strong></div>
+        <div class="top-actions"><span class="edition">BLENDER GỐC · LOCAL EDITION</span></div>
+      </header>
+      <main id="mainContent" class="main-content" tabindex="-1"></main>
+    </div>
+  </div>
+  <aside id="exportInfo" role="status" aria-live="polite" style="position:fixed;right:18px;bottom:18px;z-index:90;max-width:min(440px,calc(100vw - 36px));padding:14px 18px;border:1px solid #2a5873;border-radius:12px;background:#0c1b31;color:#d8f2ff;box-shadow:0 12px 32px #0008;font:14px system-ui;display:none"><strong>Đang chuẩn bị phòng 3D...</strong><div id="exportMessage" style="margin-top:5px;font-size:13px;line-height:1.4"></div><button id="exportDetailsButton" type="button" style="display:none;color:#75d4ff;background:transparent;border:0;padding:6px 0;text-decoration:underline;cursor:pointer">Xem lỗi chi tiết</button><pre id="exportDetails" style="display:none;max-height:140px;overflow:auto;white-space:pre-wrap;font-size:11px"></pre></aside>
+  <!-- Trình chạy chỉ được mở từ thao tác bấm nút Toàn màn hình. -->
+  <section id="labFullscreenSurface" class="lab-fullscreen hidden" aria-label="Phòng thực hành toàn màn hình" role="dialog" aria-modal="true">
+    <div id="runtimePhase" class="runtime-phase hidden">
+      <iframe id="labRuntime" title="Bài thực hành 3D toàn màn hình" allow="fullscreen" referrerpolicy="same-origin"></iframe>
+      <div id="pendingPhase" class="pending-phase hidden"></div>
+      <div id="runtimeLoading" class="runtime-loading hidden" role="status" aria-live="polite">
+        <div class="runtime-loading-card">
+          <strong id="runtimeLoadingTitle">Không tải được phòng thí nghiệm 3D</strong>
+          <p id="runtimeLoadingDetail">Hãy kiểm tra kết nối hoặc thử nạp lại.</p>
+          <div id="runtimeErrorDetails" class="runtime-error-details hidden"></div>
+          <div class="runtime-loading-actions">
+            <button type="button" id="retryRuntime" class="hidden">Thử nạp lại phòng 3D</button>
+            <button type="button" id="exitRuntimeLoading">Quay lại lộ trình</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" id="exitLabRuntime" class="exit-runtime" title="Quay lại lộ trình">✕ Thoát Lab</button>
+    </div>
+  </section>
+</body>
+</html>

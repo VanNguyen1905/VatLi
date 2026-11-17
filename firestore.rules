@@ -1,0 +1,673 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
+    function adminReader() { return signedIn() && request.auth.token.admin == true && request.auth.token.owner == true; }
+    function usernameOk(name) { return name is string && name.matches('^[a-z0-9_.]{3,30}$'); }
+    function textOk(value,maxChars) { return value is string && value.size() > 0 && value.size() <= maxChars; }
+    function taskOk(id) {
+      return request.resource.data.keys().hasAll(['id','title','categoryId','status','priority','createdAt','updatedAt'])
+        && request.resource.data.id == id
+        && textOk(request.resource.data.title,250)
+        && textOk(request.resource.data.categoryId,64)
+        && request.resource.data.priority in ['urgent','high','medium','low']
+        && request.resource.data.status in ['inbox','planned','in_progress','completed','postponed','archived']
+        && request.resource.data.scheduledSessions is list
+        && request.resource.data.scheduledSessions.size() <= 120
+        && request.resource.data.subtasks is list
+        && request.resource.data.subtasks.size() <= 250
+        && request.resource.data.rescheduleHistory is list
+        && request.resource.data.rescheduleHistory.size() <= 500
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+    function calendarOk(id) {
+      return request.resource.data.keys().hasAll(['id','title','categoryId','startTime','endTime','status','createdAt','updatedAt'])
+        && request.resource.data.id == id
+        && textOk(request.resource.data.title,250)
+        && textOk(request.resource.data.categoryId,64)
+        && request.resource.data.startTime is timestamp
+        && request.resource.data.endTime is timestamp
+        && request.resource.data.startTime < request.resource.data.endTime
+        && request.resource.data.status in ['scheduled','completed','cancelled','rescheduled']
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+    function focusOk(id) {
+      return request.resource.data.keys().hasAll(['id','categoryId','mode','startedAt','actualFocusMs','status','createdAt'])
+        && request.resource.data.id == id
+        && request.resource.data.categoryId is string
+        && request.resource.data.startedAt is timestamp
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.actualFocusMs is number
+        && request.resource.data.actualFocusMs >= 0
+        && request.resource.data.actualFocusMs <= 86400000
+        && request.resource.data.totalPausedMs is number
+        && request.resource.data.totalPausedMs >= 0
+        && request.resource.data.status in ['active','paused','completed','abandoned']
+        && request.resource.data.mode in ['countdown','stopwatch','pomodoro','deep_focus','clock'];
+    }
+    match /usernames/{username} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if signedIn() && usernameOk(username) && username != 'admin'
+        && request.resource.data.keys().hasOnly(['uid','createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && !username.matches('^76dcvv[0-9]{5}$')
+        && !exists(/databases/$(database)/documents/usernames/$(username));
+      allow update: if false;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+    match /users/{uid} {
+      allow get: if owner(uid) || adminReader();
+      allow list: if adminReader();
+      allow create: if owner(uid)
+        && !request.resource.data.keys().hasAny(['studentCode', 'accountType'])
+        && request.resource.data.uid == uid
+        && usernameOk(request.resource.data.username)
+        && !request.resource.data.username.matches('^76dcvv[0-9]{5}$')
+        && textOk(request.resource.data.displayName,100);
+      allow update: if owner(uid) && request.resource.data.uid == uid
+        && request.resource.data.username == resource.data.username
+        && request.resource.data.get('studentCode', '') == resource.data.get('studentCode', '')
+        && request.resource.data.get('accountType', '') == resource.data.get('accountType', '')
+        && request.resource.data.get('enrollmentStatus', 'active') == resource.data.get('enrollmentStatus', 'active')
+        && request.resource.data.get('withdrawnAt', null) == resource.data.get('withdrawnAt', null)
+        && (resource.data.get('accountType', '') != 'student'
+            || request.resource.data.displayName == resource.data.displayName);
+      allow delete: if owner(uid) && resource.data.get('accountType', '') != 'student';
+
+      match /tasks/{id} {
+        allow read: if owner(uid) || adminReader(); allow delete: if owner(uid);
+        allow create,update: if owner(uid) && taskOk(id);
+      }
+      match /calendarEvents/{id} {
+        allow read: if owner(uid) || adminReader(); allow delete: if owner(uid);
+        allow create,update: if owner(uid) && calendarOk(id);
+      }
+      match /focusSessions/{id} {
+        allow read: if owner(uid) || adminReader(); allow delete: if owner(uid);
+        allow create: if owner(uid) && focusOk(id);
+        // Immutable completed focus records ensure simple idempotent counters.
+        allow update: if false;
+      }
+      match /habits/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /habitLogs/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /dailyReviews/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /projects/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /goals/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /learningModules/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /lessons/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /recurringRules/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /reminders/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /notificationDevices/{id} { allow read: if owner(uid) || adminReader(); allow write: if owner(uid); }
+      match /tutorChats/{chatId} {
+        allow read: if owner(uid) || adminReader();
+        allow write: if false;
+      }
+      // Unreviewed practice cases are separate from assessed labSessions/evidence.
+      match /labProgress/B1_P1/cases/{caseId} {
+        allow read: if owner(uid) || adminReader();
+        function validCase() {
+          let d=request.resource.data;
+          let r=d.record;
+          let c=r.configuration;
+          return d.keys().hasOnly(['record','lessonId','source','verifiedByTeacher','updatedAt'])
+            && d.keys().hasAll(['record','lessonId','source','verifiedByTeacher','updatedAt'])
+            && d.lessonId == 'B1_P1' && d.source == 'CLIENT_SIMULATION'
+            && d.verifiedByTeacher == false && d.updatedAt == request.time
+            && r.keys().hasOnly(['schemaVersion','key','component','defect','mode','componentName','nominal','tolerance','lcd','status','value','unit','quantity','stateLabel','conclusion','recordedAt','configuration','columns'])
+            && r.schemaVersion == 1
+            && r.component in ['R1','R2','R3','C1','C2','L']
+            && r.defect in ['NORMAL','SHORT','OPEN']
+            && caseId == r.component + '_' + r.defect
+            && r.key == r.component + ':' + r.defect
+            && r.mode in ['OHM','CONT','CAP']
+            && c.keys().hasOnly(['component','defect','mode','redJack','blackJack','red','black','redComponent','blackComponent','powered','capacitorCharged','ready','boardMounted'])
+            && c.component == r.component && c.defect == r.defect && c.mode == r.mode
+            && c.redJack == 'VOHM' && c.blackJack == 'COM'
+            && c.red in ['PIN_A','PIN_B'] && c.black in ['PIN_A','PIN_B'] && c.red != c.black
+            && c.redComponent == r.component && c.blackComponent == r.component
+            && c.powered == false && c.capacitorCharged == false && c.ready == true && c.boardMounted == true
+            && textOk(r.componentName,80) && textOk(r.nominal,80) && textOk(r.tolerance,160)
+            && textOk(r.lcd,80) && textOk(r.status,250) && textOk(r.unit,20)
+            && textOk(r.quantity,40) && textOk(r.stateLabel,20) && textOk(r.conclusion,250)
+            && textOk(r.recordedAt,30) && r.recordedAt.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}T.*Z$')
+            && (r.value == null || (r.value is number && r.value >= 0 && r.value <= 1000000000))
+            && r.columns is list && r.columns.size() == 6
+            && textOk(r.columns[0],250) && textOk(r.columns[1],250) && textOk(r.columns[2],250)
+            && textOk(r.columns[3],250) && textOk(r.columns[4],250) && textOk(r.columns[5],250);
+        }
+        allow create: if owner(uid)
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && validCase();
+        allow update,delete: if false;
+      }
+      // B1 parts 2–4 keep unassessed simulation measurements in the SAME schema.
+      // These rows never grant grades, verified evidence or administrative rights.
+      match /labProgress/{semiLesson}/cases/{caseId} {
+        function semiLessonOk() { return semiLesson in ['B1_P2','B1_P3','B1_P4']; }
+        function voltageOk(v) { return v is number && v >= 0 && v <= 30; }
+        function semiCaseOk() {
+          let d=request.resource.data;
+          let r=d.record;
+          return semiLessonOk()
+            && d.keys().hasAll(['record','lessonId','source','verifiedByTeacher','updatedAt'])
+            && d.keys().hasOnly(['record','lessonId','source','verifiedByTeacher','updatedAt'])
+            && d.lessonId == semiLesson && d.source == 'CLIENT_SIMULATION'
+            && d.verifiedByTeacher == false && d.updatedAt == request.time
+            && r.keys().hasAll(['schemaVersion','lessonId','key','recordedAt','configuration','measurements','columns','verifiedByTeacher'])
+            && r.keys().hasOnly(['schemaVersion','lessonId','key','recordedAt','configuration','measurements','columns','verifiedByTeacher','conclusion'])
+            && r.schemaVersion == 1 && r.lessonId == semiLesson && r.key == caseId && r.verifiedByTeacher == false
+            && textOk(r.recordedAt,30) && r.recordedAt.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}T.*Z$')
+            && r.configuration is map && r.measurements is map && r.columns is list
+            && textOk(r.columns[0],500) && textOk(r.columns[1],500) && textOk(r.columns[2],500) && textOk(r.columns[3],500)
+            && ((semiLesson == 'B1_P2' && diodeCaseOk(r))
+              || (semiLesson == 'B1_P3' && bridgeCaseOk(r))
+              || (semiLesson == 'B1_P4' && zenerCaseOk(r)));
+        }
+        function diodeCaseOk(r) {
+          let c=r.configuration;
+          let f=r.measurements.FWD;
+          let b=r.measurements.REV;
+          return r.columns.size() == 4 && c.keys().hasOnly(['kind','defect'])
+            && c.kind in ['1N4007','1N4148','ZENER_5V1'] && c.defect in ['NORMAL','SHORT','OPEN']
+            && caseId == c.kind + '_' + c.defect && r.measurements.keys().hasOnly(['FWD','REV'])
+            && f.valid == true && b.valid == true && f.direction == 'FWD' && b.direction == 'REV'
+            && f.kind == c.kind && b.kind == c.kind && f.defect == c.defect && b.defect == c.defect
+            && ((c.defect == 'NORMAL' && f.value is number && f.value >= 0.45 && f.value <= 0.9 && b.value == null && r.conclusion == 'Tốt')
+              || (c.defect == 'SHORT' && f.value is number && b.value is number && f.value >= 0 && f.value < 0.01 && b.value >= 0 && b.value < 0.01 && r.conclusion == 'Hỏng')
+              || (c.defect == 'OPEN' && f.value == null && b.value == null && r.conclusion == 'Hỏng'));
+        }
+        function assemblyShapeOk(c) {
+          return c.keys().hasOnly(['mounts','wires','settings','defects'])
+            && c.mounts is map && c.mounts.size() <= 8 && c.wires is list && c.wires.size() <= 40
+            && c.settings is map && c.defects is map && c.defects.size() <= 8;
+        }
+        function bridgeCaseOk(r) {
+          let c=r.configuration;
+          let m=r.measurements;
+          return caseId in ['C0','C10','C100','C1000'] && r.columns.size() == 5 && textOk(r.columns[4],500)
+            && assemblyShapeOk(c) && c.settings.rms == 9 && c.settings.frequency == 50 && c.settings.rl == 1000
+            && c.settings.capacitance == {'C0':0,'C10':10,'C100':100,'C1000':1000}[caseId]
+            && m.keys().hasOnly(['VOUT','SCOPE_DC','SCOPE_AC','waveform'])
+            && voltageOk(m.VOUT.value) && voltageOk(m.SCOPE_DC.peak) && voltageOk(m.SCOPE_DC.ripple)
+            && voltageOk(m.SCOPE_AC.peak) && voltageOk(m.SCOPE_AC.ripple)
+            && m.waveform is list && m.waveform.size() > 0 && m.waveform.size() <= 1000;
+        }
+        function zenerCaseOk(r) {
+          let c=r.configuration;
+          let m=r.measurements;
+          return caseId in ['VIN1','VIN2','VIN3','VIN4','VIN5','VIN6','VIN7','VIN8','VIN9','VIN10','VIN12']
+            && r.columns.size() == 4 && assemblyShapeOk(c) && c.settings.rs == 220 && c.settings.rl == 1000
+            && c.settings.vin == {'VIN1':1,'VIN2':2,'VIN3':3,'VIN4':4,'VIN5':5,'VIN6':6,'VIN7':7,'VIN8':8,'VIN9':9,'VIN10':10,'VIN12':12}[caseId]
+            && m.keys().hasOnly(['VIN','VOUT']) && m.VIN.value == c.settings.vin && voltageOk(m.VOUT.value);
+        }
+        allow read: if semiLessonOk() && (owner(uid) || adminReader());
+        allow create: if semiLessonOk() && owner(uid)
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && semiCaseOk();
+        allow update,delete: if false;
+      }
+      // B2/B3 use the existing canonical cases path. Client simulation rows
+      // remain unassessed and immutable; no grade or verified evidence is granted.
+      match /labProgress/{transistorLesson}/cases/{caseId} {
+        function transistorLessonOk() { return transistorLesson in ['B2_P1','B2_P2','B2_P3','B3_P1','B3_P2','B3_P3','B3_P4']; }
+        function transistorShape(c) {
+          return c is map && c.keys().hasAll(['mounts','wires','settings','defects','values'])
+            && c.keys().hasOnly(['mounts','wires','settings','defects','values','meter'])
+            && c.mounts is map && c.mounts.size() <= 8 && c.wires is list && c.wires.size() <= 40
+            && c.defects is map && c.defects.size() <= 8 && c.values is map && c.values.size() <= 8
+            && c.settings is map && c.settings.voltage is number && c.settings.voltage >= 0 && c.settings.voltage <= 30
+            && c.settings.currentLimit is number && c.settings.currentLimit > 0 && c.settings.currentLimit <= 1;
+        }
+        function transistorCapture(e,modes) {
+          let i=e.instrument;
+          // Root configuration and timestamp are checked once. Detailed nested
+          // provenance is untrusted input, never a grade/authorization source.
+          return e.valid == true && i.physicalContacts == true && i.mode in modes
+            && (e.value == null || e.value is number)
+            && (i.mode == 'HFE' || (i.blackJack == 'COM' && (i.mode == 'DCA' ? i.redJack == 'AMP' : i.redJack == 'VOHM')));
+        }
+        function threePinEvidence(r) {
+          let p=r.measurements.pairs;
+          return p is map && p.keys().hasAll(['PIN_A_PIN_B','PIN_A_PIN_C','PIN_B_PIN_A','PIN_B_PIN_C','PIN_C_PIN_A','PIN_C_PIN_B'])
+            && r.measurements.keys().hasOnly(['pairs','inference']) && r.measurements.inference is map
+            && transistorCapture(p.PIN_A_PIN_B,['DIODE','OHM']) && transistorCapture(p.PIN_A_PIN_C,['DIODE','OHM'])
+            && transistorCapture(p.PIN_B_PIN_A,['DIODE','OHM']) && transistorCapture(p.PIN_B_PIN_C,['DIODE','OHM'])
+            && transistorCapture(p.PIN_C_PIN_A,['DIODE','OHM']) && transistorCapture(p.PIN_C_PIN_B,['DIODE','OHM'])
+            && ((transistorLesson == 'B2_P1' && caseId in ['BC547','BC557'] && r.columns.size() == 8 && transistorCapture(p.HFE,['HFE']) && p.HFE.value >= 0 && p.HFE.value <= 1000)
+              || (transistorLesson == 'B3_P1' && caseId in ['J113','2N7000'] && r.columns.size() == 8));
+        }
+        function qPointEvidence(r) {
+          let m=r.measurements;
+          let c=m.captures;
+          return c is map && r.configuration.settings.voltage == 12 && m.keys().hasOnly(['captures','value','unit','calculated','reference'])
+            && m.value is number && m.value >= -30 && m.value <= 30 && m.unit in ['V','mA'] && m.calculated is bool && m.reference is map
+            && ((transistorLesson == 'B2_P2' && caseId in ['VB','VE','VC','VCE','IE','IC'] && r.columns.size() == 5
+                && transistorCapture(c.VB,['DCV']) && transistorCapture(c.VE,['DCV']) && transistorCapture(c.VC,['DCV'])
+                && transistorCapture(c.VCE,['DCV']) && transistorCapture(c.VCC,['DCV']))
+              || (transistorLesson == 'B3_P2' && caseId in ['VS','VG','VGS','VD','VDS','ID'] && r.columns.size() == 4
+                && transistorCapture(c.VS,['DCV']) && transistorCapture(c.VG,['DCV']) && transistorCapture(c.VGS,['DCV'])
+                && transistorCapture(c.VD,['DCV']) && transistorCapture(c.VDS,['DCV'])));
+        }
+        function switchingEvidence(r) {
+          let m=r.measurements;
+          let c=m.captures;
+          return c is map && r.configuration.settings.voltage == 5 && m.ledCurrent is number && m.ledCurrent >= -0.000001 && m.ledCurrent <= 0.02
+            && ((transistorLesson == 'B2_P3' && caseId in ['VIN0','VIN5'] && r.columns.size() == 6
+                && m.keys().hasOnly(['captures','ledCurrent','region']) && textOk(m.region,40)
+                && transistorCapture(c.VBE,['DCV']) && transistorCapture(c.VCE,['DCV']) && transistorCapture(c.IC,['DCA']))
+              || (transistorLesson == 'B3_P3' && caseId in ['BRIGHT','ROOM','DARK','THRESHOLD'] && r.columns.size() == 5
+                && m.keys().hasOnly(['captures','lux','potResistance','ledCurrent','region','thresholdBracket'])
+                && m.lux is number && m.lux >= 0 && m.lux <= 12000 && m.potResistance is number && m.potResistance >= 0 && m.potResistance <= 100000
+                && transistorCapture(c.RLDR,['OHM']) && transistorCapture(c.VGS,['DCV']) && (caseId != 'THRESHOLD' || m.thresholdBracket is map))
+              || (transistorLesson == 'B3_P4' && caseId in ['INITIAL','TRIGGER','HOLD','INTERRUPT'] && r.columns.size() == 5
+                && m.keys().hasOnly(['captures','scr','ledCurrent']) && m.scr is map && m.scr.latched is bool
+                && transistorCapture(c.VAK,['DCV']) && transistorCapture(c.VGK,['DCV'])));
+        }
+        function transistorCaseOk() {
+          let d=request.resource.data;
+          let r=d.record;
+          return transistorLessonOk() && d.keys().hasAll(['record','lessonId','source','verifiedByTeacher','updatedAt'])
+            && d.keys().hasOnly(['record','lessonId','source','verifiedByTeacher','updatedAt']) && d.lessonId == transistorLesson
+            && d.source == 'CLIENT_SIMULATION' && d.verifiedByTeacher == false && d.updatedAt == request.time
+            && r is map && r.keys().hasAll(['schemaVersion','lessonId','key','recordedAt','configuration','measurements','columns','verifiedByTeacher'])
+            && r.keys().hasOnly(['schemaVersion','lessonId','key','recordedAt','configuration','measurements','columns','verifiedByTeacher','conclusion'])
+            && r.schemaVersion == 1 && r.lessonId == transistorLesson && r.key == caseId && r.verifiedByTeacher == false
+            && textOk(r.recordedAt,30) && r.recordedAt.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}T.*Z$') && transistorShape(r.configuration)
+            && r.measurements is map && r.columns is list && r.columns.size() >= 4 && r.columns.size() <= 8
+            && r.columns[0] is string && r.columns[1] is string && r.columns[2] is string && r.columns[3] is string
+            && (r.columns.size() < 5 || r.columns[4] is string) && (r.columns.size() < 6 || r.columns[5] is string)
+            && (r.columns.size() < 7 || r.columns[6] is string) && (r.columns.size() < 8 || r.columns[7] is string)
+            && r.columns.join('').size() <= 2400
+            && ((transistorLesson in ['B2_P1','B3_P1'] && threePinEvidence(r))
+              || (transistorLesson in ['B2_P2','B3_P2'] && qPointEvidence(r))
+              || (transistorLesson in ['B2_P3','B3_P3','B3_P4'] && switchingEvidence(r)));
+        }
+        allow read: if transistorLessonOk() && (owner(uid) || adminReader());
+        allow create: if transistorLessonOk() && owner(uid)
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && transistorCaseOk();
+        allow update,delete: if false;
+      }
+      // Only report text/revision is stored in the existing parent. Numerical
+      // results remain exclusively in cases; optimistic revision prevents loss.
+      match /labProgress/{reportCourse} {
+        function courseReportOk() {
+          let d=request.resource.data;
+          let r=d.report;
+          let f=r.fields;
+          return reportCourse in ['B2','B3'] && d.keys().hasOnly(['schemaVersion','courseId','uid','revision','report','source','verifiedByTeacher','updatedAt'])
+            && d.schemaVersion == 1 && d.courseId == reportCourse && d.uid == uid && d.source == 'CLIENT_SIMULATION'
+            && d.verifiedByTeacher == false && d.updatedAt == request.time && d.revision is int && d.revision > 0 && d.revision <= 1000000
+            && r is map && r.keys().hasOnly(['schemaVersion','courseId','revision','fields']) && r.schemaVersion == 1 && r.courseId == reportCourse && r.revision == d.revision
+            && f is map && f.keys().hasAll(['group','objectives','theory','discussion','answers']) && f.keys().hasOnly(['group','objectives','theory','discussion','answers'])
+            && f.group is string && f.group.size() <= 4000 && f.objectives is string && f.objectives.size() <= 4000
+            && f.theory is string && f.theory.size() <= 4000 && f.discussion is string && f.discussion.size() <= 4000
+            && f.answers is list && f.answers.size() == 3 && f.answers[0] is string && f.answers[0].size() <= 4000
+            && f.answers[1] is string && f.answers[1].size() <= 4000 && f.answers[2] is string && f.answers[2].size() <= 4000;
+        }
+        allow read: if reportCourse in ['B2','B3'] && (owner(uid) || adminReader());
+        allow create: if owner(uid) && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && courseReportOk() && request.resource.data.revision == 1;
+        allow update: if owner(uid) && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && courseReportOk() && request.resource.data.revision == resource.data.revision + 1;
+        allow delete: if false;
+      }
+      // Append-only lesson steps: counts derive from immutable rows, never a client score.
+      match /labProgress/{lessonId}/steps/{stepId} {
+        allow read: if owner(uid) || adminReader();
+        function validLessonStep() {
+          let d=request.resource.data;
+          return d.keys().hasOnly(['schemaVersion','lessonId','experimentId','practicalId','practicalIndex','totalSteps','source','stepIndex','completed','verifiedByTeacher','updatedAt'])
+            && d.keys().hasAll(['schemaVersion','lessonId','experimentId','practicalId','practicalIndex','totalSteps','source','stepIndex','completed','verifiedByTeacher','updatedAt'])
+            && d.schemaVersion == 1 && d.lessonId == lessonId
+            && d.completed == true && d.verifiedByTeacher == false && d.updatedAt == request.time
+            && d.stepIndex is int && d.stepIndex >= 0 && d.stepIndex < d.totalSteps
+            && stepId == 'step_' + string(d.stepIndex)
+            && d.totalSteps is int && d.totalSteps > 0 && d.totalSteps <= 50
+            && textOk(d.experimentId,80) && textOk(d.practicalId,80)
+            && d.practicalIndex is int && d.practicalIndex >= 0 && d.practicalIndex < 50
+            && ((lessonId == 'B1_P1' && d.source == 'CLIENT_SIMULATION' && d.totalSteps == 8 && d.experimentId == 'L01' && d.practicalId == 'L01-P01' && d.practicalIndex == 0)
+              || validPreparationSteps(d));
+        }
+        function validPreparationSteps(d) {
+          let catalog=get(/databases/$(database)/documents/labExperiments/$(d.experimentId)).data;
+          let practical=catalog.practicals[d.practicalIndex];
+          return d.source == 'PREPARATION' && catalog.published == true
+            && lessonId == d.experimentId + '__' + d.practicalId
+            && practical.id == d.practicalId && practical.instructions is list
+            && practical.instructions.size() == d.totalSteps;
+        }
+        allow create: if owner(uid)
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && validLessonStep();
+        allow update,delete: if false;
+      }
+      // Phiên thực hành: sinh viên chỉ được tạo phiên PREPARATION, không tự chấm điểm.
+      match /labSessions/{sessionId} {
+        allow read: if owner(uid) || adminReader();
+        allow create: if owner(uid)
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && request.resource.data.keys().hasOnly(['id','uid','experimentId','practicalId','startedAt','status'])
+          && request.resource.data.keys().hasAll(['id','uid','experimentId','practicalId','startedAt','status'])
+          && request.resource.data.id == sessionId
+          && request.resource.data.uid == uid
+          && textOk(request.resource.data.experimentId,80)
+          && textOk(request.resource.data.practicalId,80)
+          && request.resource.data.startedAt is timestamp
+          && request.resource.data.status == 'PREPARATION';
+        // Không cho bất kỳ client nào tự cập nhật điểm; callable backend reviewLabSession kiểm tra ngưỡng và chứng cứ.
+        allow update: if false;
+        allow delete: if false;
+        match /labEvidence/{eventId} {
+          allow read: if owner(uid) || adminReader();
+          // Client chỉ có thể ghi nhận lần mở trang CHUẨN BỊ, không được tự nhận đã đo 3D.
+          allow create: if owner(uid)
+            && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+            && existsAfter(/databases/$(database)/documents/users/$(uid)/labSessions/$(sessionId))
+            && request.resource.data.keys().hasOnly(['kind','source','verified','sessionId','recordedAt','detail'])
+            && request.resource.data.kind == 'WEB_PREPARATION'
+            && request.resource.data.source == 'WEB'
+            && request.resource.data.verified == false
+            && request.resource.data.sessionId == sessionId
+            && request.resource.data.recordedAt is timestamp
+            && request.resource.data.detail is string
+            && request.resource.data.detail.size() <= 500;
+          allow update, delete: if false;
+        }
+      }
+
+    }
+    // Nhật ký câu hỏi: chỉ Cloud Functions/Admin SDK ghi. Sinh viên chỉ đọc bản thân, admin giám sát.
+    match /tutorDailyUsage/{dailyId} {
+      allow read,write: if false;
+    }
+    // Danh mục phòng Lab: student chỉ xem bài đã xuất bản; không thể sửa nội dung.
+    match /labExperiments/{id} {
+      function versionedUpdate() {
+        return request.resource.data.revision == resource.data.get('revision',0) + 1
+          && request.resource.data.updatedAt == request.time;
+      }
+      function validExperiment() {
+        return request.resource.data.keys().hasOnly(['code','title','description','category','published','order','practicals','updatedAt','revision','archived'])
+          && textOk(request.resource.data.code,60)
+          && textOk(request.resource.data.title,250)
+          && request.resource.data.description is string
+          && request.resource.data.description.size() <= 4000
+          && textOk(request.resource.data.category,100)
+          && request.resource.data.published is bool
+          && request.resource.data.order is number
+          && request.resource.data.practicals is list
+          && request.resource.data.practicals.size() >= 1
+          && request.resource.data.practicals.size() <= 50
+          && request.resource.data.updatedAt is timestamp
+          && request.resource.data.get('revision',0) is int
+          && request.resource.data.get('archived',false) is bool
+          && (!request.resource.data.get('archived',false) || request.resource.data.published == false);
+      }
+      allow get, list: if adminReader() || (signedIn() && resource.data.published == true);
+      allow create: if adminReader() && validExperiment();
+      allow update: if adminReader() && validExperiment() && versionedUpdate();
+      // Recoverable archive only. Never remove curriculum or student references.
+      allow delete: if false;
+    }
+    // Kho asset độc lập: chỉ người học đã đăng nhập được xem; admin mới thêm/sửa.
+    match /labEquipment/{assetId} {
+      allow get, list: if signedIn();
+      allow create, update: if adminReader()
+        && request.resource.data.keys().hasOnly(['name','quantity','specification','category','assetStatus','modelPath','interactivity','updatedAt','revision'])
+        && (resource == null || (request.resource.data.revision == resource.data.get('revision',0) + 1
+          && request.resource.data.updatedAt == request.time
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','quantity','specification','revision','updatedAt'])))
+        && textOk(request.resource.data.name,160)
+        && request.resource.data.quantity is int
+        && request.resource.data.quantity >= 1
+        && request.resource.data.quantity <= 100
+        && request.resource.data.specification is string
+        && request.resource.data.specification.size() <= 800
+        && request.resource.data.category in ['INSTRUMENT','CONNECTOR','PASSIVE','SEMICONDUCTOR','TOOL']
+        && request.resource.data.assetStatus in ['NOT_MODELED','IN_PROGRESS','IMPORTED_UNVERIFIED','VERIFIED']
+        && (request.resource.data.modelPath == null || textOk(request.resource.data.modelPath,500))
+        && request.resource.data.interactivity is list
+        && request.resource.data.interactivity.size() <= 20
+        && request.resource.data.updatedAt is timestamp;
+      allow delete: if false;
+    }
+    // Trang thai truy cap cua SINH VIEN: khong phai bang chung thuc hanh 3D.
+    // Sinh vien chi ghi document uid cua chinh minh; chi quan tri duoc doc toan bo.
+    match /labPresence/{uid} {
+      allow get: if owner(uid) || adminReader();
+      allow list: if adminReader();
+      function validPresence() {
+        return owner(uid)
+          && exists(/databases/$(database)/documents/users/$(uid))
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('accountType','') == 'student'
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && request.resource.data.keys().hasOnly(['uid','studentCode','mode','online','path','updatedAt'])
+          && request.resource.data.keys().hasAll(['uid','studentCode','mode','online','path','updatedAt'])
+          && request.resource.data.uid == uid
+          && request.resource.data.studentCode == get(/databases/$(database)/documents/users/$(uid)).data.studentCode
+          && request.resource.data.mode in ['BROWSING','READING','PREPARING','LAB_PENDING']
+          && request.resource.data.online is bool
+          && request.resource.data.path is string
+          && request.resource.data.path.size() <= 120
+          && request.resource.data.path.matches('^/[a-zA-Z0-9_/-]*$')
+          && request.resource.data.updatedAt == request.time;
+      }
+      allow create, update: if validPresence();
+      allow delete: if false;
+    }
+    // 46 phong Lab: mot sinh vien / mot document UID.
+    // Moi snapshot CHI la trang thai chuan bi; khong chua chuyen dong camera, dong dien hay diem.
+    match /labLiveRooms/{uid} {
+      allow get: if owner(uid) || adminReader();
+      allow list: if adminReader();
+      function validRoom() {
+        return owner(uid)
+          && exists(/databases/$(database)/documents/users/$(uid))
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('accountType','') == 'student'
+          && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'
+          && request.resource.data.keys().hasOnly(['uid','studentCode','sessionId','experimentId','practicalId','sceneMode','selectedInstrument','selectedComponent','stepIndex','powerState','updatedAt'])
+          && request.resource.data.keys().hasAll(['uid','studentCode','sessionId','experimentId','practicalId','sceneMode','selectedInstrument','selectedComponent','stepIndex','powerState','updatedAt'])
+          && request.resource.data.uid == uid
+          && request.resource.data.studentCode == get(/databases/$(database)/documents/users/$(uid)).data.studentCode
+          && request.resource.data.sessionId is string
+          && request.resource.data.sessionId.size() > 3
+          && request.resource.data.sessionId.size() <= 100
+          && exists(/databases/$(database)/documents/users/$(uid)/labSessions/$(request.resource.data.sessionId))
+          && request.resource.data.experimentId == get(/databases/$(database)/documents/users/$(uid)/labSessions/$(request.resource.data.sessionId)).data.experimentId
+          && request.resource.data.practicalId == get(/databases/$(database)/documents/users/$(uid)/labSessions/$(request.resource.data.sessionId)).data.practicalId
+          && request.resource.data.sceneMode == 'PREPARATION_ONLY'
+          && request.resource.data.selectedInstrument in ['NONE','DMM','OSCILLOSCOPE','DC_SUPPLY']
+          && request.resource.data.selectedComponent in ['NONE','RESISTOR','CERAMIC_CAP','ELECTROLYTIC_CAP','INDUCTOR','DIODE','ZENER','BJT','JFET','MOSFET','SCR','LDR','LED']
+          && request.resource.data.stepIndex is int
+          && request.resource.data.stepIndex >= 0
+          && request.resource.data.stepIndex <= 49
+          && request.resource.data.powerState == 'OFF'
+          && request.resource.data.updatedAt == request.time;
+      }
+      allow create, update: if validRoom();
+      allow delete: if false;
+    }
+    // Canvas video is peer-to-peer. These documents contain private signaling only.
+    // No rights on the existing preparation/progress/roster schema are broadened.
+    match /labLiveRooms/{uid}/canvasLive/state {
+      function studentAccount() { return exists(/databases/$(database)/documents/users/$(uid))
+        && get(/databases/$(database)/documents/users/$(uid)).data.get('accountType','') == 'student'
+        && get(/databases/$(database)/documents/users/$(uid)).data.get('enrollmentStatus','active') != 'withdrawn'; }
+      function student() { return owner(uid) && studentAccount(); }
+      function id(value) { return value is string && value.matches('^[A-Za-z0-9_-]{1,128}$'); }
+      function room() { return get(/databases/$(database)/documents/labLiveRooms/$(uid)/canvasLive/state).data; }
+      function freshRoom(roomId) { return room().available == true && room().roomId == roomId
+        && room().expiresAt > request.time && room().updatedAt > request.time-duration.value(90,'s'); }
+      function validRoom() { let d=request.resource.data;return student()
+        && d.keys().hasAll(['uid','roomId','available','updatedAt','expiresAt'])
+        && d.keys().hasOnly(['uid','roomId','available','updatedAt','expiresAt'])
+        && d.uid == uid && id(d.roomId) && d.available is bool && d.updatedAt == request.time
+        && d.expiresAt is timestamp && d.expiresAt > request.time && d.expiresAt <= request.time+duration.value(120,'s'); }
+      allow get: if student() || adminReader();
+      allow list: if false;
+      allow create: if validRoom();
+      allow update: if validRoom();
+      allow delete: if student();
+      match /canvasRequests/{viewer} {
+        function participant() { return student() || (adminReader() && request.auth.uid == viewer); }
+        function activeRequest() { return resource.data.expiresAt > request.time && freshRoom(resource.data.roomId)
+          && !(resource.data.studentState in ['stopped','declined','failed']) && !(resource.data.viewerState in ['stopped','failed']); }
+        function validRequest() { let d=request.resource.data;return d.keys().hasAll(['studentUid','viewerUid','requestId','roomId','studentState','viewerState','createdAt','expiresAt','studentSeenAt','viewerSeenAt'])
+          && d.keys().hasOnly(['studentUid','viewerUid','requestId','roomId','studentState','viewerState','createdAt','expiresAt','studentSeenAt','viewerSeenAt','offer','answer'])
+          && d.studentUid == uid && d.viewerUid == viewer && id(d.requestId) && id(d.roomId)
+          && d.studentState in ['pending','offered','declined','stopped','failed'] && d.viewerState in ['requesting','answered','watching','stopped','failed']
+          && d.createdAt is timestamp && d.expiresAt is timestamp && d.studentSeenAt is timestamp && d.viewerSeenAt is timestamp
+          && (!('offer' in d) || textOk(d.offer,30000)) && (!('answer' in d) || textOk(d.answer,30000)); }
+        allow get: if participant();
+        allow list: if participant() && request.query.limit != null && request.query.limit <= 10;
+        allow create: if adminReader() && request.auth.uid == viewer && viewer != uid && studentAccount() && validRequest()
+          && freshRoom(request.resource.data.roomId) && request.resource.data.studentState == 'pending' && request.resource.data.viewerState == 'requesting'
+          && !request.resource.data.keys().hasAny(['offer','answer']) && request.resource.data.createdAt == request.time
+          && request.resource.data.studentSeenAt == request.time && request.resource.data.viewerSeenAt == request.time
+          && request.resource.data.expiresAt > request.time && request.resource.data.expiresAt <= request.time+duration.value(1,'h');
+        allow update: if participant() && validRequest() && (
+          (student() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['studentState','studentSeenAt','offer'])
+            && request.resource.data.studentSeenAt == request.time && (
+              (request.resource.data.studentState in ['stopped','declined','failed'] && request.resource.data.get('offer','') == resource.data.get('offer','')) ||
+              (activeRequest() && resource.data.viewerSeenAt > request.time-duration.value(45,'s') && (
+                (resource.data.studentState == 'pending' && request.resource.data.studentState == 'offered' && textOk(request.resource.data.get('offer',''),30000)) ||
+                (request.resource.data.studentState == resource.data.studentState && request.resource.data.get('offer','') == resource.data.get('offer','')))))) ||
+          (adminReader() && request.auth.uid == viewer && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewerState','viewerSeenAt','answer'])
+            && request.resource.data.viewerSeenAt == request.time && (
+              (request.resource.data.viewerState in ['stopped','failed'] && request.resource.data.get('answer','') == resource.data.get('answer','')) ||
+              (activeRequest() && (
+                (resource.data.studentState == 'offered' && resource.data.viewerState == 'requesting' && request.resource.data.viewerState == 'answered' && textOk(request.resource.data.get('answer',''),30000)) ||
+                (resource.data.studentState == 'offered' && resource.data.viewerState in ['answered','watching'] && request.resource.data.viewerState == 'watching' && request.resource.data.get('answer','') == resource.data.get('answer','')) ||
+                (request.resource.data.viewerState == resource.data.viewerState && request.resource.data.get('answer','') == resource.data.get('answer','')))))));
+        allow delete: if participant() && (resource.data.studentState in ['stopped','declined','failed'] || resource.data.viewerState in ['stopped','failed'] || resource.data.expiresAt <= request.time
+          || !exists(/databases/$(database)/documents/labLiveRooms/$(uid)/canvasLive/state) || room().roomId != resource.data.roomId || room().available == false || room().expiresAt <= request.time);
+        match /canvasIce/{candidateId} {
+          function call() { return get(/databases/$(database)/documents/labLiveRooms/$(uid)/canvasLive/state/canvasRequests/$(viewer)).data; }
+          function peer() { return student() || (adminReader() && request.auth.uid == viewer); }
+          allow get: if peer();
+          allow list: if peer() && request.query.limit != null && request.query.limit <= 260;
+          allow create: if peer() && call().expiresAt > request.time && freshRoom(call().roomId)
+            && call().studentState == 'offered' && !(call().viewerState in ['stopped','failed'])
+            && request.resource.data.keys().hasAll(['requestId','side','index','senderUid','candidate','createdAt','expiresAt'])
+            && request.resource.data.keys().hasOnly(['requestId','side','index','senderUid','candidate','createdAt','expiresAt'])
+            && request.resource.data.requestId == call().requestId && request.resource.data.senderUid == request.auth.uid
+            && request.resource.data.side == (student()?'student':'viewer')
+            && request.resource.data.index is int && request.resource.data.index >= 0 && request.resource.data.index < 64
+            && candidateId == call().requestId+'_'+request.resource.data.side+'_'+string(request.resource.data.index)
+            && request.resource.data.candidate is map
+            && request.resource.data.candidate.keys().hasOnly(['candidate','sdpMid','sdpMLineIndex','usernameFragment'])
+            && request.resource.data.candidate.keys().hasAll(['candidate','sdpMid','sdpMLineIndex','usernameFragment'])
+            && request.resource.data.candidate.candidate is string && request.resource.data.candidate.candidate.size() <= 2048
+            && (request.resource.data.candidate.sdpMid == null || (request.resource.data.candidate.sdpMid is string && request.resource.data.candidate.sdpMid.size() <= 32))
+            && (request.resource.data.candidate.sdpMLineIndex == null || (request.resource.data.candidate.sdpMLineIndex is int && request.resource.data.candidate.sdpMLineIndex >= 0 && request.resource.data.candidate.sdpMLineIndex < 16))
+            && (request.resource.data.candidate.usernameFragment == null || (request.resource.data.candidate.usernameFragment is string && request.resource.data.candidate.usernameFragment.size() <= 256))
+            && request.resource.data.createdAt == request.time && request.resource.data.expiresAt == call().expiresAt;
+          allow update: if false;
+          allow delete: if peer();
+        }
+      }
+    }
+    match /labRoster/{studentCode} {
+      allow read: if adminReader() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if adminReader()
+        && request.resource.data.keys().hasOnly(['studentCode','fullName','className','uid','createdAt'])
+        && textOk(request.resource.data.studentCode,40)
+        && studentCode == request.resource.data.studentCode.lower()
+        && request.resource.data.studentCode.matches('^[A-Z0-9_-]{2,40}$')
+        && request.resource.data.studentCode != '76DCVV21175'
+        && textOk(request.resource.data.fullName,100) && textOk(request.resource.data.className,80)
+        && request.resource.data.uid is string && request.resource.data.uid.size() <= 128
+        && (request.resource.data.uid == '' ||
+          get(/databases/$(database)/documents/users/$(request.resource.data.uid)).data.studentCode == request.resource.data.studentCode)
+        && request.resource.data.createdAt == request.time;
+      allow update: if adminReader()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName','className','enrollmentStatus','revision','updatedAt'])
+        && textOk(request.resource.data.fullName,100)
+        && request.resource.data.className is string && request.resource.data.className.size() <= 80
+        && request.resource.data.enrollmentStatus in ['active','withdrawn']
+        && request.resource.data.revision == resource.data.get('revision',0) + 1
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Danh gia website: cong khai sau khi Owner duyet, moi UID mot bai.
+    match /siteFeedback/{uid} {
+      function validReview() {
+        return request.resource.data.keys().hasOnly(['uid','authorName','rating','message','status','createdAt','updatedAt'])
+          && request.resource.data.keys().hasAll(['uid','authorName','rating','message','status','createdAt','updatedAt'])
+          && request.resource.data.uid == uid
+          && request.resource.data.authorName is string
+          && request.resource.data.authorName.size() >= 2
+          && request.resource.data.authorName.size() <= 80
+          && request.resource.data.message is string
+          && request.resource.data.message.size() >= 10
+          && request.resource.data.message.size() <= 800
+          && request.resource.data.rating is int
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5
+          && request.resource.data.createdAt is timestamp
+          && request.resource.data.updatedAt is timestamp;
+      }
+      allow get: if adminReader() || owner(uid) || resource.data.status == 'approved';
+      allow list: if adminReader() || resource.data.status == 'approved';
+      allow create: if owner(uid) && validReview()
+        && request.resource.data.status == 'pending';
+      allow update: if (
+        owner(uid) && resource.data.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['authorName','rating','message','status','updatedAt'])
+          && request.resource.data.status == 'pending'
+          && validReview()
+      ) || (
+        adminReader()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','updatedAt'])
+          && request.resource.data.status in ['approved','hidden']
+          && validReview()
+      );
+      allow delete: if adminReader();
+    }
+
+    
+    // AI_BISCOT_USAGE_RULES_V1_BEGIN
+    // Chi cho chu tai khoan doc va tang bo dem. Server timestamp KHONG the gia mao.
+    // 6 luot moi cua so 24 gio. Day la quota tren FIRESTORE, khong khoa duoc loi goi AI
+    // truc tiep ngoai UI: bat App Check + authenticated-users mode + RPM quota tren AI Logic.
+    match /aiBiscotUsage/{uid} {
+      allow get: if owner(uid) || adminReader();
+      allow list: if adminReader();
+      function validUsage() {
+        return owner(uid)
+          && request.resource.data.keys().hasOnly(['count', 'dayStart', 'updatedAt'])
+          && request.resource.data.keys().hasAll(['count', 'dayStart', 'updatedAt'])
+          && request.resource.data.count is int
+          && request.resource.data.count >= 1
+          && request.resource.data.count <= 6
+          && request.resource.data.dayStart is timestamp
+          && request.resource.data.updatedAt == request.time;
+      }
+      allow create: if validUsage()
+        && request.resource.data.count == 1
+        && request.resource.data.dayStart == request.time;
+      allow update: if validUsage()
+        && (
+          (request.time < resource.data.dayStart + duration.value(24, 'h')
+            && request.resource.data.dayStart == resource.data.dayStart
+            && resource.data.count < 6
+            && request.resource.data.count == resource.data.count + 1)
+          ||
+          (request.time >= resource.data.dayStart + duration.value(24, 'h')
+            && request.resource.data.dayStart == request.time
+            && request.resource.data.count == 1)
+        );
+      allow delete: if false;
+    }
+    // AI_BISCOT_USAGE_RULES_V1_END
+
+    match /{document=**} { allow read,write: if false; }
+  }
+}

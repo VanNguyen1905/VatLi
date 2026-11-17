@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mô Phỏng 3D: Lắp Ráp & Kiểm Tra Sống/Chết Linh Kiện Thụ Động</title>
+  <!-- Nhúng Thư viện đồ họa 3D Three.js & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --panel: rgba(22, 30, 46, 0.95);
+      --accent: #38bdf8;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; width: 100vw; }
+
+    #webgl-canvas { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+
+    /* Thanh điều khiển trên cùng */
+    .top-bar {
+      position: absolute; top: 12px; left: 16px; right: 16px; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--panel); backdrop-filter: blur(8px);
+      padding: 10px 18px; border-radius: 12px; border: 1px solid var(--border);
+    }
+    .top-bar h1 { font-size: 1.05rem; color: var(--accent); }
+    .top-bar .tips { font-size: 0.8rem; color: var(--text-dim); }
+
+    .btn-guide {
+      background: #0284c7; color: #fff; border: none; border-radius: 6px;
+      padding: 6px 14px; font-weight: bold; cursor: pointer; font-size: 0.82rem;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4); transition: background 0.2s;
+    }
+    .btn-guide:hover { background: #0369a1; }
+
+    /* Module Đồng hồ DMM bên trái */
+    .dmm-ui {
+      position: absolute; top: 75px; left: 16px; z-index: 10;
+      width: 260px; background: #ea580c; border-radius: 16px; padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6); border: 2px solid #c2410c;
+    }
+    .dmm-name { text-align: center; font-size: 0.8rem; font-weight: 900; color: #1e293b; letter-spacing: 2px; }
+    .lcd {
+      background: #7ca982; border: 3px solid #1e293b; border-radius: 6px;
+      padding: 8px 10px; margin: 10px 0 8px 0; height: 75px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      color: #0f1c11; font-family: 'Courier New', monospace;
+    }
+    .lcd-sub { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; }
+    .lcd-main { font-size: 1.9rem; font-weight: 900; text-align: right; }
+
+    /* THIẾT KẾ NÚM VẶN XOAY (ROTARY KNOB) */
+    .rotary-area {
+      position: relative;
+      width: 170px;
+      height: 170px;
+      margin: 8px auto 10px auto;
+      background: radial-gradient(circle, #2d3748 45%, #1a202c 70%, #0f172a 100%);
+      border-radius: 50%;
+      box-shadow: inset 0 2px 6px rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.5);
+      border: 3px solid #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .knob-wheel {
+      width: 96px;
+      height: 96px;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.2);
+      border: 2px solid #475569;
+      transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .knob-wheel:active {
+      filter: brightness(1.1);
+    }
+    .knob-indicator {
+      position: absolute;
+      top: 6px;
+      left: calc(50% - 3px);
+      width: 6px;
+      height: 38px;
+      background: #ef4444;
+      border-radius: 3px;
+      box-shadow: 0 0 5px rgba(239, 68, 68, 0.8);
+    }
+    .knob-label {
+      position: absolute;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #f8fafc;
+      cursor: pointer;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .knob-label:hover { color: var(--accent); transform: scale(1.1); }
+    .knob-label.active { color: #facc15; text-shadow: 0 0 6px rgba(250, 204, 21, 0.8); }
+    
+    .lbl-pos-off  { top: 8px; left: 50%; transform: translateX(-50%); }
+    .lbl-pos-ohm  { top: 50%; right: 8px; transform: translateY(-50%); }
+    .lbl-pos-cont { bottom: 8px; left: 50%; transform: translateX(-50%); }
+    .lbl-pos-cap  { top: 50%; left: 8px; transform: translateY(-50%); }
+
+    .probe-connect-tools {
+      background: #0f172a; padding: 8px; border-radius: 8px;
+    }
+    .probe-tool-btn {
+      width: 100%; padding: 6px; margin: 4px 0; border: none; border-radius: 4px;
+      font-size: 0.75rem; font-weight: bold; cursor: pointer; color: white;
+    }
+    .btn-red-probe { background: #dc2626; }
+    .btn-black-probe { background: #334155; border: 1px solid #64748b; }
+    .btn-probe-active { outline: 3px solid #facc15; }
+
+    /* Khung Hướng Dẫn Nhanh */
+    .dmm-quick-guide {
+      margin-top: 8px; padding: 7px 9px; background: rgba(15, 23, 42, 0.9);
+      border-radius: 6px; font-size: 0.73rem; color: #e2e8f0; line-height: 1.4;
+      border-left: 3px solid #facc15;
+    }
+
+    /* Module Bảng kiểm tra bên phải */
+    .inspect-panel {
+      position: absolute; top: 75px; right: 16px; z-index: 10;
+      width: 320px; background: var(--panel); backdrop-filter: blur(8px);
+      border-radius: 12px; border: 1px solid var(--border); padding: 14px;
+      font-size: 0.85rem;
+    }
+    .sec-title { color: var(--accent); font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .comp-select, .defect-select {
+      width: 100%; padding: 6px 10px; background: #0f172a; color: white;
+      border: 1px solid var(--border); border-radius: 6px; margin-bottom: 10px; font-size: 0.8rem;
+    }
+    .status-badge {
+      display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-top: 5px;
+    }
+    .badge-ok { background: #15803d; color: #bbf7d0; }
+    .badge-short { background: #b91c1c; color: #fecaca; }
+    .badge-open { background: #a16207; color: #fef08a; }
+
+    /* Khung Bảng 1.1 ở dưới cùng */
+    .table-container {
+      position: absolute; bottom: 12px; left: 16px; right: 16px; z-index: 10;
+      background: var(--panel); backdrop-filter: blur(8px);
+      border-radius: 12px; border: 1px solid var(--border); padding: 10px 14px;
+      max-height: 180px; overflow-y: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: center; }
+    th, td { border: 1px solid var(--border); padding: 5px; }
+    th { background: #0f172a; color: var(--accent); position: sticky; top: 0; }
+
+    /* Popup Modal Hướng Dẫn */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
+      z-index: 100; display: none; align-items: center; justify-content: center;
+    }
+    .modal-box {
+      background: #1e293b; border: 1px solid var(--border); border-radius: 14px;
+      width: 90%; max-width: 680px; max-height: 88vh; overflow-y: auto;
+      padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 16px;
+    }
+    .modal-header h2 { font-size: 1.2rem; color: var(--accent); }
+    .btn-close { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; }
+    .btn-close:hover { color: #fff; }
+    .guide-step { margin-bottom: 16px; }
+    .guide-step h3 { font-size: 0.95rem; color: #facc15; margin-bottom: 6px; }
+    .guide-step p, .guide-step ul { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
+    .guide-step ul { margin-left: 20px; margin-top: 4px; }
+    .warning-box {
+      background: #451a03; border-left: 4px solid #f97316; padding: 10px 12px;
+      border-radius: 6px; font-size: 0.82rem; color: #fed7aa; margin: 12px 0;
+    }
+  </style>
+<link rel="stylesheet" href="./utt-enhance.css" />
+</head>
+<body>
+
+  <!-- WebGL 3D Canvas -->
+  <div id="webgl-canvas"></div>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div>
+      <h1>BƯỚC 1: KIỂM TRA CHẤT LƯỢNG LINH KIỆN THỤ ĐỘNG (3D)</h1>
+      <div class="tips">Xoay camera 3D: Giữ chuột trái | Di chuyển: Chuột phải | Thu phóng: Lăn chuột</div>
+    </div>
+    <button class="btn-guide" onclick="toggleModal(true)">📖 Hướng Dẫn Đo Bằng DMM</button>
+  </div>
+
+  <!-- DMM Module -->
+  <div class="dmm-ui">
+    <div class="dmm-name">TRUE RMS DMM</div>
+    <div class="lcd">
+      <div class="lcd-sub">
+        <span id="lcd-mode-txt">OFF</span>
+        <span id="lcd-state-txt"></span>
+      </div>
+      <div class="lcd-main" id="lcd-val">OFF</div>
+    </div>
+
+    <!-- NÚM VẶN XOAY -->
+    <div class="rotary-area">
+      <span class="knob-label lbl-pos-off active" id="lbl-OFF" onclick="setKnobByMode('OFF')">OFF</span>
+      <span class="knob-label lbl-pos-ohm" id="lbl-OHM" onclick="setKnobByMode('OHM')">Ω</span>
+      <span class="knob-label lbl-pos-cont" id="lbl-CONT" onclick="setKnobByMode('CONT')">🔔</span>
+      <span class="knob-label lbl-pos-cap" id="lbl-CAP" onclick="setKnobByMode('CAP')">-||-</span>
+
+      <div class="knob-wheel" id="rotaryKnob" onclick="rotateKnobNext()">
+        <div class="knob-indicator"></div>
+      </div>
+    </div>
+    <div style="text-align: center; font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px;">
+      *Nhấp vào núm hoặc ký hiệu để vặn thang đo
+    </div>
+
+    <!-- Công cụ cắm que đo -->
+    <div class="probe-connect-tools">
+      <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 4px;">Vị trí que đo trên Breadboard:</div>
+      <button class="probe-tool-btn btn-red-probe" id="btnProbeRed" onclick="toggleProbePick('RED')">
+        Que Đỏ (+): <span id="lblProbeRed">Chưa cắm</span>
+      </button>
+      <button class="probe-tool-btn btn-black-probe" id="btnProbeBlack" onclick="toggleProbePick('BLACK')">
+        Que Đen (-): <span id="lblProbeBlack">Chưa cắm</span>
+      </button>
+    </div>
+
+    <!-- Hướng Dẫn Nhanh -->
+    <div class="dmm-quick-guide">
+      <strong>Quy tắc đo nhanh:</strong><br>
+      • Điện trở / Cuộn cảm → Chọn thang <strong>Ω</strong><br>
+      • Kiểm tra đứt / chạm → Chọn thang <strong>🔔 (Thông mạch)</strong><br>
+      • Tụ điện → Chọn thang <strong>-||- (C)</strong>
+    </div>
+  </div>
+
+  <!-- Panel Kiểm tra & Bóc tách Linh Kiện -->
+  <div class="inspect-panel">
+    <div class="sec-title">1. Chọn Linh Kiện Gắn Lên Bo 3D</div>
+    <select class="comp-select" id="compPicker" onchange="changeActiveComponent()">
+      <option value="R_1K">Điện trở R1 (1 kΩ ±5%)</option>
+      <option value="R_10K">Điện trở R2 (10 kΩ ±5%)</option>
+      <option value="R_220">Điện trở R3 (220 Ω ±5%)</option>
+      <option value="C_104">Tụ gốm C1 (104 = 100 nF)</option>
+      <option value="C_100U">Tụ hóa C2 (100 µF / 25V)</option>
+      <option value="L_10M">Cuộn cảm L (10 mH)</option>
+    </select>
+
+    <div class="sec-title">2. Giả lập Lỗi Hư Hỏng (Kiểm tra)</div>
+    <select class="defect-select" id="defectPicker" onchange="applyDefect()">
+      <option value="NORMAL">Bình thường (Linh kiện SỐNG)</option>
+      <option value="SHORT">Bị chập / ngắn mạch (Chết CHẠM)</option>
+      <option value="OPEN">Bị đứt chân / rạn ngắt (Chết ĐỨT)</option>
+    </select>
+
+    <div id="compDiagnostics" style="font-size: 0.78rem; line-height: 1.4; margin-bottom: 8px;"></div>
+    <button style="width: 100%; padding: 6px; background: var(--accent); color: #000; border: none; font-weight: bold; border-radius: 6px; cursor: pointer;" onclick="saveToReport()">
+      + Ghi vào Bảng Số Liệu 1.1
+    </button>
+  </div>
+
+  <!-- Bảng số liệu chuẩn 1.1 -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Tên linh kiện</th>
+          <th>Trị số danh định</th>
+          <th>Dung sai cho phép</th>
+          <th>Thực tế đo được</th>
+          <th>Trạng thái linh kiện</th>
+          <th>Kết luận chất lượng</th>
+        </tr>
+      </thead>
+      <tbody id="reportTbody"></tbody>
+    </table>
+  </div>
+
+  <!-- CỬA SỔ HƯỚNG DẪN SỬ DỤNG ĐỒNG HỒ VẠN NĂNG (DMM) ĐÃ SỬA CÔNG THỨC CHUẨN ĐẸP -->
+  <div class="modal-overlay" id="guideModal" onclick="if(event.target === this) toggleModal(false)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>HƯỚNG DẪN SỬ DỤNG ĐỒNG HỒ VẠN NĂNG (DMM)</h2>
+        <button class="btn-close" onclick="toggleModal(false)">&times;</button>
+      </div>
+
+      <div class="guide-step">
+        <h3>1. Thao tác cắm que đo</h3>
+        <p>• <strong>Que đen (COM):</strong> Luôn cắm vào cổng tham chiếu đất (GND/COM).</p>
+        <p>• <strong>Que đỏ (V/Ω/C):</strong> Cắm vào cổng đo trở, áp và tụ.</p>
+        <p>• <strong>Cắm vào mạch:</strong> Lần lượt bấm nút <em>Que Đỏ (+)</em> và <em>Que Đen (-)</em> để đưa đầu kim tiếp xúc vào <strong>PIN_A</strong> và <strong>PIN_B</strong> của linh kiện trên bo cắm 3D.</p>
+      </div>
+
+      <div class="warning-box">
+        ⚠️ <strong>Lưu ý an toàn:</strong> Không dùng hai tay chạm cùng lúc vào hai đầu kim đo vì điện trở cơ thể người sẽ mắc song song gây sai lệch số đo điện trở lớn!
+      </div>
+
+      <div class="guide-step">
+        <h3>2. Cách chọn thang đo tương ứng</h3>
+        <ul>
+          <li><strong>Điện trở (R):</strong> Xoay núm sang vị trí <strong>Ω</strong> → Đối chiếu trị số đo được với vòng màu trên thân (sai số ±5%).</li>
+          <li><strong>Tụ điện (C):</strong> Xoay núm sang vị trí <strong>-||-</strong> → Đơn vị đo hiển thị là nF hoặc µF.</li>
+          <li><strong>Cuộn cảm (L):</strong> Xoay núm sang vị trí <strong>Ω</strong> → Xác định điện trở thuần của cuộn dây quấn (<strong>R<sub>thuần</sub> ≈ 10 – 15 Ω</strong>).</li>
+        </ul>
+      </div>
+
+      <div class="guide-step">
+        <h3>3. Đánh giá Sống / Chết / Chạm / Đứt</h3>
+        <ul>
+          <li><strong>Bình thường (Sống):</strong> Giá trị đo ổn định, nằm trong dung sai danh định.</li>
+          <li><strong>Chết ĐỨT (Open Circuit):</strong> DMM hiển thị <code>O.L</code> (Over Limit / Vô cùng lớn).</li>
+          <li><strong>Chết CHẠM (Short Circuit):</strong> Điện trở sụt về <strong>≈ 0.00 Ω</strong>. Chuyển sang thang <strong>🔔</strong> sẽ phát còi kêu cảnh báo liên tục.</li>
+        </ul>
+      </div>
+
+      <button style="width: 100%; padding: 10px; background: var(--accent); color: #000; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px;" onclick="toggleModal(false)">
+        Đã hiểu - Tiếp tục thực hành
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* ================= DỮ LIỆU VÀ CẤU HÌNH NÚM XOAY ================= */
+    const KNOB_MODES = [
+      { mode: 'OFF',  angle: 0,   labelId: 'lbl-OFF' },
+      { mode: 'OHM',  angle: 90,  labelId: 'lbl-OHM' },
+      { mode: 'CONT', angle: 180, labelId: 'lbl-CONT' },
+      { mode: 'CAP',  angle: 270, labelId: 'lbl-CAP' }
+    ];
+    let currentKnobIdx = 0;
+    let dmmMode = 'OFF';
+
+    const COMP_DB = {
+      R_1K: { name: 'Điện trở R1', valNominal: '1 kΩ', numVal: 1000, tol: 5, unit: 'Ω', type: 'RES', normalVal: 996, desc: 'Mã màu: Nâu - Đen - Đỏ - Nhũ vàng' },
+      R_10K: { name: 'Điện trở R2', valNominal: '10 kΩ', numVal: 10000, tol: 5, unit: 'Ω', type: 'RES', normalVal: 10120, desc: 'Mã màu: Nâu - Đen - Cam - Nhũ vàng' },
+      R_220: { name: 'Điện trở R3', valNominal: '220 Ω', numVal: 220, tol: 5, unit: 'Ω', type: 'RES', normalVal: 219, desc: 'Mã màu: Đỏ - Đỏ - Nâu - Nhũ vàng' },
+      C_104: { name: 'Tụ gốm 104', valNominal: '100 nF', numVal: 100, tol: 10, unit: 'nF', type: 'CAP', normalVal: 98.4, desc: 'Ký hiệu: 104 = 10 x 10^4 pF' },
+      C_100U: { name: 'Tụ hóa 100µF', valNominal: '100 µF', numVal: 100, tol: 20, unit: 'µF', type: 'CAP', normalVal: 95.2, desc: 'Phân cực âm/dương, chịu áp 25V' },
+      L_10M: { name: 'Cuộn cảm 10mH', valNominal: '10 mH', numVal: 12.5, tol: 10, unit: 'Ω', type: 'IND', normalVal: 12.4, desc: 'Xác định điện trở thuần của cuộn dây' }
+    };
+
+    let activeCompKey = 'R_1K';
+    let activeDefect = 'NORMAL';
+    let probeRedPin = null;   // null, 'PIN_A', 'PIN_B'
+    let probeBlackPin = null; // null, 'PIN_A', 'PIN_B'
+
+    /* Xoay núm vặn tuần tự */
+    function rotateKnobNext() {
+      currentKnobIdx = (currentKnobIdx + 1) % KNOB_MODES.length;
+      applyKnobState();
+    }
+
+    /* Xoay trực tiếp tới mode chỉ định */
+    function setKnobByMode(modeName) {
+      const idx = KNOB_MODES.findIndex(m => m.mode === modeName);
+      if (idx !== -1) {
+        currentKnobIdx = idx;
+        applyKnobState();
+      }
+    }
+
+    function applyKnobState() {
+      const cur = KNOB_MODES[currentKnobIdx];
+      dmmMode = cur.mode;
+
+      // Xoay góc đồ họa của núm
+      document.getElementById('rotaryKnob').style.transform = `rotate(${cur.angle}deg)`;
+
+      // Cập nhật nhãn sáng
+      document.querySelectorAll('.knob-label').forEach(lbl => lbl.classList.remove('active'));
+      document.getElementById(cur.labelId).classList.add('active');
+
+      document.getElementById('lcd-mode-txt').innerText = cur.mode;
+      evaluateMeasurement();
+    }
+
+    function toggleModal(show) {
+      document.getElementById('guideModal').style.display = show ? 'flex' : 'none';
+    }
+
+    /* ================= KHỞI TẠO THREE.JS 3D SCENE ================= */
+    const container = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0e17);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 15, 20);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.maxPolarAngle = Math.PI / 2.1;
+
+    // Ánh sáng 3D
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(10, 20, 10);
+    scene.add(dirLight);
+
+    /* ================= TẠO CÁC MÔ HÌNH 3D ================= */
+    // 1. Breadboard
+    const bbGroup = new THREE.Group();
+    const bbMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3 });
+    const bbBase = new THREE.Mesh(new THREE.BoxGeometry(16, 0.8, 10), bbMat);
+    bbGroup.add(bbBase);
+
+    const pinHoleMat = new THREE.MeshBasicMaterial({ color: 0x334155 });
+    for (let x = -6; x <= 6; x += 1.2) {
+      for (let z = -3.5; z <= 3.5; z += 1.2) {
+        const hole = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.82, 0.35), pinHoleMat);
+        hole.position.set(x, 0.05, z);
+        bbGroup.add(hole);
+      }
+    }
+    scene.add(bbGroup);
+
+    // Chân cắm kim loại Pin A và Pin B
+    const pinGeo = new THREE.CylinderGeometry(0.2, 0.2, 1.2, 16);
+    const pinMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.1 });
+    const contactPinA = new THREE.Mesh(pinGeo, pinMat);
+    contactPinA.position.set(-2.4, 0.6, 0);
+    bbGroup.add(contactPinA);
+
+    const contactPinB = new THREE.Mesh(pinGeo, pinMat);
+    contactPinB.position.set(2.4, 0.6, 0);
+    bbGroup.add(contactPinB);
+
+    // 2. Linh kiện 3D
+    let compMeshGroup = new THREE.Group();
+    scene.add(compMeshGroup);
+
+    function build3DComponent() {
+      while(compMeshGroup.children.length > 0) { 
+        compMeshGroup.remove(compMeshGroup.children[0]); 
+      }
+
+      const compInfo = COMP_DB[activeCompKey];
+
+      if (compInfo.type === 'RES') {
+        const bodyGeo = new THREE.CylinderGeometry(0.55, 0.55, 2.6, 24);
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0xd4a373 });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        body.rotation.z = Math.PI / 2;
+        body.position.y = 1.1;
+        compMeshGroup.add(body);
+
+        const ringGeo = new THREE.CylinderGeometry(0.56, 0.56, 0.2, 24);
+        const ring1 = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0x8b5a2b }));
+        ring1.rotation.z = Math.PI / 2; ring1.position.set(-0.8, 1.1, 0);
+        const ring2 = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        ring2.rotation.z = Math.PI / 2; ring2.position.set(-0.3, 1.1, 0);
+        const ring3 = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+        ring3.rotation.z = Math.PI / 2; ring3.position.set(0.3, 1.1, 0);
+        const ringGold = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xffd700 }));
+        ringGold.rotation.z = Math.PI / 2; ringGold.position.set(0.8, 1.1, 0);
+        compMeshGroup.add(ring1, ring2, ring3, ringGold);
+      } else if (compInfo.type === 'CAP' && activeCompKey === 'C_104') {
+        const capGeo = new THREE.SphereGeometry(0.8, 24, 16);
+        capGeo.scale(1, 0.9, 0.3);
+        const capMat = new THREE.MeshStandardMaterial({ color: 0xe65100, roughness: 0.5 });
+        const cap = new THREE.Mesh(capGeo, capMat);
+        cap.position.y = 1.4;
+        compMeshGroup.add(cap);
+      } else if (compInfo.type === 'CAP' && activeCompKey === 'C_100U') {
+        const elecGeo = new THREE.CylinderGeometry(0.7, 0.7, 2, 24);
+        const elecMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.4 });
+        const capElec = new THREE.Mesh(elecGeo, elecMat);
+        capElec.position.y = 1.5;
+        compMeshGroup.add(capElec);
+      } else {
+        const indGeo = new THREE.CylinderGeometry(0.65, 0.65, 2.2, 24);
+        indGeo.rotateZ(Math.PI / 2);
+        const indMat = new THREE.MeshStandardMaterial({ color: 0x0284c7 });
+        const ind = new THREE.Mesh(indGeo, indMat);
+        ind.position.y = 1.2;
+        compMeshGroup.add(ind);
+      }
+
+      const legMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8 });
+      const legA = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.6, 8), legMat);
+      legA.position.set(-2.4, 0.8, 0);
+      const legB = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.6, 8), legMat);
+      legB.position.set(2.4, 0.8, 0);
+      compMeshGroup.add(legA, legB);
+    }
+
+    // 3. Que Đo 3D
+    function createProbeMesh(colorHex) {
+      const pGroup = new THREE.Group();
+      const handle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.22, 0.22, 2.5, 16),
+        new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.4 })
+      );
+      handle.position.y = 1.8;
+      const tip = new THREE.Mesh(
+        new THREE.ConeGeometry(0.08, 0.7, 16),
+        new THREE.MeshStandardMaterial({ color: 0xf1f5f9, metalness: 0.95 })
+      );
+      tip.rotation.x = Math.PI;
+      tip.position.y = 0.35;
+      pGroup.add(handle, tip);
+      return pGroup;
+    }
+
+    const probeRedMesh = createProbeMesh(0xdc2626);
+    probeRedMesh.position.set(-5, 0, 5);
+    scene.add(probeRedMesh);
+
+    const probeBlackMesh = createProbeMesh(0x0f172a);
+    probeBlackMesh.position.set(5, 0, 5);
+    scene.add(probeBlackMesh);
+
+    /* ================= THAO TÁC CẮM QUE ĐO ================= */
+    function toggleProbePick(color) {
+      if (color === 'RED') {
+        if (!probeRedPin) probeRedPin = 'PIN_A';
+        else if (probeRedPin === 'PIN_A') probeRedPin = 'PIN_B';
+        else probeRedPin = null;
+      } else {
+        if (!probeBlackPin) probeBlackPin = 'PIN_B';
+        else if (probeBlackPin === 'PIN_B') probeBlackPin = 'PIN_A';
+        else probeBlackPin = null;
+      }
+
+      updateProbePositions3D();
+      evaluateMeasurement();
+    }
+
+    function updateProbePositions3D() {
+      if (probeRedPin === 'PIN_A') probeRedMesh.position.set(-2.4, 0.7, 0);
+      else if (probeRedPin === 'PIN_B') probeRedMesh.position.set(2.4, 0.7, 0);
+      else probeRedMesh.position.set(-5, 0, 5);
+
+      if (probeBlackPin === 'PIN_A') probeBlackMesh.position.set(-2.4, 0.7, 0);
+      else if (probeBlackPin === 'PIN_B') probeBlackMesh.position.set(2.4, 0.7, 0);
+      else probeBlackMesh.position.set(5, 0, 5);
+
+      document.getElementById('lblProbeRed').innerText = probeRedPin ? probeRedPin : 'Chưa cắm';
+      document.getElementById('lblProbeBlack').innerText = probeBlackPin ? probeBlackPin : 'Chưa cắm';
+    }
+
+    function changeActiveComponent() {
+      activeCompKey = document.getElementById('compPicker').value;
+      build3DComponent();
+      updateInfoText();
+      evaluateMeasurement();
+    }
+
+    function applyDefect() {
+      activeDefect = document.getElementById('defectPicker').value;
+      updateInfoText();
+      evaluateMeasurement();
+    }
+
+    function updateInfoText() {
+      const c = COMP_DB[activeCompKey];
+      let badge = '<span class="status-badge badge-ok">SỐNG (Tốt)</span>';
+      if (activeDefect === 'SHORT') badge = '<span class="status-badge badge-short">CHẾT CHẬM (Ngắn mạch)</span>';
+      if (activeDefect === 'OPEN') badge = '<span class="status-badge badge-open">CHẾT ĐỨT (Hở mạch)</span>';
+
+      document.getElementById('compDiagnostics').innerHTML = `
+        <strong>${c.name}</strong> (${c.valNominal})<br>
+        <em>${c.desc}</em><br>
+        Trạng thái mô phỏng: ${badge}
+      `;
+    }
+
+    function evaluateMeasurement() {
+      const lcd = document.getElementById('lcd-val');
+      const lcdState = document.getElementById('lcd-state-txt');
+
+      if (dmmMode === 'OFF') {
+        lcd.innerText = 'OFF';
+        lcdState.innerText = '';
+        return;
+      }
+
+      const isConnectedAcross = (probeRedPin === 'PIN_A' && probeBlackPin === 'PIN_B') || 
+                                (probeRedPin === 'PIN_B' && probeBlackPin === 'PIN_A');
+      const isBothSamePin = probeRedPin && probeBlackPin && (probeRedPin === probeBlackPin);
+
+      if (isBothSamePin) {
+        lcd.innerText = '0.00';
+        lcdState.innerText = 'CHẬP QUE';
+        return;
+      }
+
+      if (!isConnectedAcross) {
+        lcd.innerText = dmmMode === 'OHM' ? 'O.L' : '0.00';
+        lcdState.innerText = 'HỞ MẠCH';
+        return;
+      }
+
+      const comp = COMP_DB[activeCompKey];
+
+      if (activeDefect === 'OPEN') {
+        lcd.innerText = 'O.L';
+        lcdState.innerText = 'ĐỨT MẠCH';
+        return;
+      }
+
+      if (activeDefect === 'SHORT') {
+        if (dmmMode === 'OHM' || dmmMode === 'CONT') {
+          lcd.innerText = '0.01 Ω';
+          lcdState.innerText = 'BEEP! (CHẬP)';
+        } else {
+          lcd.innerText = 'O.L';
+          lcdState.innerText = 'LỖI C';
+        }
+        return;
+      }
+
+      if (dmmMode === 'OHM') {
+        if (comp.type === 'RES') {
+          lcd.innerText = comp.normalVal >= 1000 ? (comp.normalVal / 1000).toFixed(3) + ' k' : comp.normalVal.toFixed(1) + ' Ω';
+          lcdState.innerText = 'BÌNH THƯỜNG';
+        } else if (comp.type === 'IND') {
+          lcd.innerText = comp.normalVal.toFixed(1) + ' Ω';
+          lcdState.innerText = 'R_THUẦN';
+        } else {
+          lcd.innerText = 'O.L';
+          lcdState.innerText = 'TỤ CHẶN DC';
+        }
+      } else if (dmmMode === 'CONT') {
+        if (comp.type === 'IND' || (comp.type === 'RES' && comp.normalVal < 50)) {
+          lcd.innerText = comp.normalVal.toFixed(1) + ' Ω';
+          lcdState.innerText = 'BEEP! (THÔNG)';
+        } else {
+          lcd.innerText = 'O.L';
+          lcdState.innerText = 'KHÔNG THÔNG';
+        }
+      } else if (dmmMode === 'CAP') {
+        if (comp.type === 'CAP') {
+          lcd.innerText = comp.normalVal.toFixed(1) + ' ' + comp.unit;
+          lcdState.innerText = 'DUNG LƯỢNG';
+        } else {
+          lcd.innerText = '0.00';
+          lcdState.innerText = 'SAI THANG';
+        }
+      }
+    }
+
+    function saveToReport() {
+      const c = COMP_DB[activeCompKey];
+      const tbody = document.getElementById('reportTbody');
+      const row = document.createElement('tr');
+
+      const lcdText = document.getElementById('lcd-val').innerText;
+      let statusText = 'Bình thường (Đạt)';
+      let statusColor = '#4ade80';
+
+      if (activeDefect === 'SHORT') {
+        statusText = 'HỎNG (Chết chạm)';
+        statusColor = '#f87171';
+      } else if (activeDefect === 'OPEN') {
+        statusText = 'HỎNG (Chết đứt)';
+        statusColor = '#facc15';
+      }
+
+      row.innerHTML = `
+        <td><strong>${c.name}</strong></td>
+        <td>${c.valNominal}</td>
+        <td>±${c.tol}%</td>
+        <td><code style="color:var(--accent); font-weight:bold;">${lcdText}</code></td>
+        <td style="color:${statusColor}; font-weight:bold;">${activeDefect}</td>
+        <td>${statusText}</td>
+      `;
+      tbody.appendChild(row);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    build3DComponent();
+    updateInfoText();
+    applyKnobState();
+    animate();
+  </script>
+<script src="./utt-bridge.js"></script>
+  <script src="./biscot-dmm-observer.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.firebase/
+firebase-debug.log
+.firebaserc
+service-account*.json
+functions/.env*
+!functions/.env.example
+
+# Local update backups and generated state
+.update-backups/
+.utt-*-backup*/
+.utt-lab3d-last-backup
+*.tsbuildinfo
+.qa-tooling/
+.labvirt-final-qa-backup/
+.labvirt-*-backups/
+.biscot-*-backups/
+_backup_*/
+
+# Private Firebase Admin service account keys MUST NEVER be committed
+*serviceAccount*.json
+*service-account*.json
+*adminsdk*.json
+
+# Never publish private rosters, QA profiles, recordings or output
+data/
+tmp/
+docs/labvirt-final-qa/
+playwright-report/
+test-results/
+*.zip
+*.pem
+*.key

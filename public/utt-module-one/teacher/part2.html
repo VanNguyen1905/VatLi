@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mô Phỏng 3D: Kiểm Tra Chất Lượng Diode & Diode Zener</title>
+  <!-- Thư viện đồ họa 3D Three.js & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root {
+      --bg: #090d16;
+      --panel: rgba(22, 30, 46, 0.95);
+      --accent: #38bdf8;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; width: 100vw; }
+
+    #webgl-canvas { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+
+    /* Thanh điều khiển trên cùng */
+    .top-bar {
+      position: absolute; top: 12px; left: 16px; right: 16px; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--panel); backdrop-filter: blur(8px);
+      padding: 10px 18px; border-radius: 12px; border: 1px solid var(--border);
+    }
+    .top-bar h1 { font-size: 1.05rem; color: var(--accent); }
+    .top-bar .tips { font-size: 0.8rem; color: var(--text-dim); }
+
+    .btn-guide {
+      background: #0284c7; color: #fff; border: none; border-radius: 6px;
+      padding: 6px 14px; font-weight: bold; cursor: pointer; font-size: 0.82rem;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4); transition: background 0.2s;
+    }
+    .btn-guide:hover { background: #0369a1; }
+
+    /* Module Đồng hồ DMM bên trái */
+    .dmm-ui {
+      position: absolute; top: 75px; left: 16px; z-index: 10;
+      width: 265px; background: #ea580c; border-radius: 16px; padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6); border: 2px solid #c2410c;
+    }
+    .dmm-name { text-align: center; font-size: 0.8rem; font-weight: 900; color: #1e293b; letter-spacing: 2px; }
+    .lcd {
+      background: #7ca982; border: 3px solid #1e293b; border-radius: 6px;
+      padding: 8px 10px; margin: 10px 0 8px 0; height: 75px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      color: #0f1c11; font-family: 'Courier New', monospace;
+    }
+    .lcd-sub { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; }
+    .lcd-main { font-size: 1.85rem; font-weight: 900; text-align: right; }
+
+    /* Núm vặn xoay (Rotary Knob) */
+    .rotary-area {
+      position: relative; width: 170px; height: 170px; margin: 8px auto 10px auto;
+      background: radial-gradient(circle, #2d3748 45%, #1a202c 70%, #0f172a 100%);
+      border-radius: 50%; box-shadow: inset 0 2px 6px rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.5);
+      border: 3px solid #0f172a; display: flex; align-items: center; justify-content: center;
+      user-select: none;
+    }
+    .knob-wheel {
+      width: 96px; height: 96px; background: linear-gradient(145deg, #1e293b, #0f172a);
+      border-radius: 50%; position: relative; cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.2);
+      border: 2px solid #475569; transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .knob-wheel:active { filter: brightness(1.1); }
+    .knob-indicator {
+      position: absolute; top: 6px; left: calc(50% - 3px);
+      width: 6px; height: 38px; background: #ef4444; border-radius: 3px;
+      box-shadow: 0 0 5px rgba(239, 68, 68, 0.8);
+    }
+    .knob-label {
+      position: absolute; font-size: 0.72rem; font-weight: 900; color: #f8fafc;
+      cursor: pointer; transition: color 0.15s, transform 0.15s;
+    }
+    .knob-label:hover { color: var(--accent); transform: scale(1.1); }
+    .knob-label.active { color: #facc15; text-shadow: 0 0 6px rgba(250, 204, 21, 0.8); }
+
+    .lbl-pos-off   { top: 8px; left: 50%; transform: translateX(-50%); }
+    .lbl-pos-diode { top: 50%; right: 8px; transform: translateY(-50%); }
+    .lbl-pos-res   { bottom: 8px; left: 50%; transform: translateX(-50%); }
+    .lbl-pos-vdc   { top: 50%; left: 8px; transform: translateY(-50%); }
+
+    /* Điều khiển que đo */
+    .probe-connect-tools { background: #0f172a; padding: 8px; border-radius: 8px; }
+    .probe-tool-btn {
+      width: 100%; padding: 6px; margin: 4px 0; border: none; border-radius: 4px;
+      font-size: 0.75rem; font-weight: bold; cursor: pointer; color: white;
+    }
+    .btn-red-probe { background: #dc2626; }
+    .btn-black-probe { background: #334155; border: 1px solid #64748b; }
+    .quick-swap-btn {
+      width: 100%; padding: 5px; margin-top: 4px; background: #0284c7; color: white;
+      border: none; border-radius: 4px; font-size: 0.72rem; font-weight: bold; cursor: pointer;
+    }
+    .quick-swap-btn:hover { background: #0369a1; }
+
+    /* Hướng dẫn nhận diện nhanh */
+    .dmm-quick-guide {
+      margin-top: 8px; padding: 7px 9px; background: rgba(15, 23, 42, 0.9);
+      border-radius: 6px; font-size: 0.72rem; color: #e2e8f0; line-height: 1.45;
+      border-left: 3px solid #facc15;
+    }
+
+    /* Panel điều khiển bên phải */
+    .inspect-panel {
+      position: absolute; top: 75px; right: 16px; z-index: 10;
+      width: 320px; background: var(--panel); backdrop-filter: blur(8px);
+      border-radius: 12px; border: 1px solid var(--border); padding: 14px;
+      font-size: 0.85rem;
+    }
+    .sec-title { color: var(--accent); font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .comp-select, .defect-select {
+      width: 100%; padding: 6px 10px; background: #0f172a; color: white;
+      border: 1px solid var(--border); border-radius: 6px; margin-bottom: 10px; font-size: 0.8rem;
+    }
+    .status-badge {
+      display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-top: 5px;
+    }
+    .badge-ok { background: #15803d; color: #bbf7d0; }
+    .badge-short { background: #b91c1c; color: #fecaca; }
+    .badge-open { background: #a16207; color: #fef08a; }
+
+    /* Bảng số liệu chuẩn 1.2 */
+    .table-container {
+      position: absolute; bottom: 12px; left: 16px; right: 16px; z-index: 10;
+      background: var(--panel); backdrop-filter: blur(8px);
+      border-radius: 12px; border: 1px solid var(--border); padding: 10px 14px;
+      max-height: 180px; overflow-y: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: center; }
+    th, td { border: 1px solid var(--border); padding: 6px; }
+    th { background: #0f172a; color: var(--accent); position: sticky; top: 0; }
+
+    /* Modal hướng dẫn kiểm tra Diode */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
+      z-index: 100; display: none; align-items: center; justify-content: center;
+    }
+    .modal-box {
+      background: #1e293b; border: 1px solid var(--border); border-radius: 14px;
+      width: 90%; max-width: 680px; max-height: 88vh; overflow-y: auto;
+      padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 16px;
+    }
+    .modal-header h2 { font-size: 1.15rem; color: var(--accent); }
+    .btn-close { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; }
+    .btn-close:hover { color: #fff; }
+    .guide-step { margin-bottom: 14px; }
+    .guide-step h3 { font-size: 0.92rem; color: #facc15; margin-bottom: 5px; }
+    .guide-step p, .guide-step ul { font-size: 0.83rem; color: #cbd5e1; line-height: 1.55; }
+    .guide-step ul { margin-left: 20px; margin-top: 4px; }
+    .highlight-box {
+      background: #064e3b; border-left: 4px solid #10b981; padding: 10px 12px;
+      border-radius: 6px; font-size: 0.82rem; color: #a7f3d0; margin: 12px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WebGL 3D Canvas -->
+  <div id="webgl-canvas"></div>
+
+  <!-- Thanh trên cùng -->
+  <div class="top-bar">
+    <div>
+      <h1>BƯỚC 2: KIỂM TRA CHẤT LƯỢNG DIODE CHỈNH LƯU VÀ DIODE ZENER (3D)</h1>
+      <div class="tips">Xoay 3D: Chuột trái | Di chuyển: Chuột phải | Thu phóng: Lăn chuột</div>
+    </div>
+    <button class="btn-guide" onclick="toggleModal(true)">📖 Hướng Dẫn Kiểm Tra Chất Lượng Diode</button>
+  </div>
+
+  <!-- Đồng hồ vạn năng DMM -->
+  <div class="dmm-ui">
+    <div class="dmm-name">TRUE RMS DMM</div>
+    <div class="lcd">
+      <div class="lcd-sub">
+        <span id="lcd-mode-txt">-|&gt;|-</span>
+        <span id="lcd-state-txt"></span>
+      </div>
+      <div class="lcd-main" id="lcd-val">0.642 V</div>
+    </div>
+
+    <!-- NÚM XOAY ROTARY KNOB -->
+    <div class="rotary-area">
+      <span class="knob-label lbl-pos-off" id="lbl-OFF" onclick="setKnobByMode('OFF')">OFF</span>
+      <span class="knob-label lbl-pos-diode active" id="lbl-DIODE" onclick="setKnobByMode('DIODE')">-|>|-</span>
+      <span class="knob-label lbl-pos-res" id="lbl-RES" onclick="setKnobByMode('RES')">Ω</span>
+      <span class="knob-label lbl-pos-vdc" id="lbl-VDC" onclick="setKnobByMode('VDC')">V⎓</span>
+
+      <div class="knob-wheel" id="rotaryKnob" onclick="rotateKnobNext()" style="transform: rotate(90deg);">
+        <div class="knob-indicator"></div>
+      </div>
+    </div>
+    <div style="text-align: center; font-size: 0.7rem; color: #cbd5e1; margin-bottom: 6px;">
+      *Nhấp vào núm hoặc ký hiệu để xoay thang đo
+    </div>
+
+    <!-- Cụm thao tác que đo -->
+    <div class="probe-connect-tools">
+      <div style="font-size: 0.72rem; color: #94a3b8; margin-bottom: 4px;">Vị trí que đo trên bo mạch:</div>
+      <button class="probe-tool-btn btn-red-probe" id="btnProbeRed" onclick="cycleProbe('RED')">
+        Que Đỏ (+): <span id="lblProbeRed">Anode (A)</span>
+      </button>
+      <button class="probe-tool-btn btn-black-probe" id="btnProbeBlack" onclick="cycleProbe('BLACK')">
+        Que Đen (-): <span id="lblProbeBlack">Cathode (K)</span>
+      </button>
+      <button class="quick-swap-btn" onclick="quickBias('FWD')">⚡ Đo Thuận (A nối +, K nối -)</button>
+      <button class="quick-swap-btn" style="background:#475569;" onclick="quickBias('REV')">🔄 Đo Ngược (A nối -, K nối +)</button>
+    </div>
+
+    <div class="dmm-quick-guide">
+      <strong>Nhận diện màu sắc thân Diode:</strong><br>
+      • <strong>1N4007:</strong> Vỏ nhựa đen đục, vạch trắng bạc.<br>
+      • <strong>1N4148:</strong> Vỏ kính cam hổ phách, vạch đen.<br>
+      • <strong>Zener 5.1V:</strong> Vỏ kính đỏ ruby bóng, vạch đen/xanh.
+    </div>
+  </div>
+
+  <!-- Panel thao tác bên phải -->
+  <div class="inspect-panel">
+    <div class="sec-title">1. Chọn Diode Kiểm Tra (Bảng 1.2)</div>
+    <select class="comp-select" id="compPicker" onchange="changeActiveComponent()">
+      <option value="D_1N4007">Diode chỉnh lưu 1N4007 (Vỏ nhựa Đen)</option>
+      <option value="D_1N4148">Diode tốc độ cao 1N4148 (Vỏ kính Cam)</option>
+      <option value="DZ_5V1">Diode Zener 5.1V (Vỏ kính Đỏ Ruby)</option>
+    </select>
+
+    <div class="sec-title">2. Giả Lập Trạng Thái Linh Kiện</div>
+    <select class="defect-select" id="defectPicker" onchange="applyDefect()">
+      <option value="NORMAL">Bình thường (Diode TỐT)</option>
+      <option value="SHORT">Chết CHẬM / Ngắn mạch (HỎNG)</option>
+      <option value="OPEN">Chết ĐỨT / Hở mạch (HỎNG)</option>
+    </select>
+
+    <div id="compDiagnostics" style="font-size: 0.78rem; line-height: 1.4; margin-bottom: 8px;"></div>
+    
+    <div style="display:flex; gap:6px;">
+      <button style="flex:1; padding: 7px; background: #0284c7; color: #fff; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; font-size:0.75rem;" onclick="recordMeasurement('FWD')">
+        Lưu Áp Thuận
+      </button>
+      <button style="flex:1; padding: 7px; background: #475569; color: #fff; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; font-size:0.75rem;" onclick="recordMeasurement('REV')">
+        Lưu Áp Ngược
+      </button>
+    </div>
+    <button style="width:100%; margin-top:6px; padding: 8px; background: var(--accent); color: #000; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; font-size:0.8rem;" onclick="saveToTable()">
+      + Ghi Kết Quả Vào Bảng 1.2
+    </button>
+  </div>
+
+  <!-- Bảng số liệu chuẩn 1.2 -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Mã linh kiện</th>
+          <th>Điện áp đo chiều thuận (V)</th>
+          <th>Kết quả đo chiều ngược</th>
+          <th>Trạng thái linh kiện</th>
+          <th>Kết luận chất lượng</th>
+        </tr>
+      </thead>
+      <tbody id="reportTbody">
+        <tr id="row_D_1N4007">
+          <td><strong>Diode chỉnh lưu 1N4007</strong></td>
+          <td class="fwd-val">--</td>
+          <td class="rev-val">--</td>
+          <td class="status-val">Chưa đo</td>
+          <td class="eval-val">--</td>
+        </tr>
+        <tr id="row_D_1N4148">
+          <td><strong>Diode tốc độ cao 1N4148</strong></td>
+          <td class="fwd-val">--</td>
+          <td class="rev-val">--</td>
+          <td class="status-val">Chưa đo</td>
+          <td class="eval-val">--</td>
+        </tr>
+        <tr id="row_DZ_5V1">
+          <td><strong>Diode Zener 5.1V</strong></td>
+          <td class="fwd-val">--</td>
+          <td class="rev-val">--</td>
+          <td class="status-val">Chưa đo</td>
+          <td class="eval-val">--</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MODAL HƯỚNG DẪN KIỂM TRA CHẤT LƯỢNG DIODE ĐẦY ĐỦ NÚM XOAY & ĐO ĐẠC -->
+  <div class="modal-overlay" id="guideModal" onclick="if(event.target === this) toggleModal(false)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>HƯỚNG DẪN KIỂM TRA CHẤT LƯỢNG DIODE & DIODE ZENER</h2>
+        <button class="btn-close" onclick="toggleModal(false)">&times;</button>
+      </div>
+
+      <div class="guide-step">
+        <h3>1. Nhận diện ngoại quan chính xác</h3>
+        <ul>
+          <li><strong>1N4007:</strong> Vỏ nhựa đúc đen đặc trưng, công suất lớn (1A/1000V), vạch Cathode màu trắng bạc.</li>
+          <li><strong>1N4148:</strong> Vỏ thủy tinh nhỏ trong suốt có màu <strong>Cam hổ phách (Amber Orange)</strong>, vạch Cathode màu đen.</li>
+          <li><strong>Zener 5.1V:</strong> Thân thủy tinh màu <strong>Đỏ Ruby / Hồng cánh sen</strong> đặc trưng của dòng BZX55, vạch Cathode đen.</li>
+        </ul>
+      </div>
+
+      <div class="guide-step">
+        <h3>2. Cách sử dụng đồng hồ DMM & Núm xoay thang đo</h3>
+        <p>Đồng hồ vạn năng DMM được trang bị núm xoay chuyển mạch đa năng với các nấc chức năng chính:</p>
+        <ul>
+          <li><strong>OFF:</strong> Tắt đồng hồ khi không sử dụng nhằm bảo vệ pin và thiết bị.</li>
+          <li><strong>Thang đo Diode / Thông mạch (Diode Mode - <code>-|&gt;|-</code>):</strong> Chức năng chuyên dụng dùng để kiểm tra tiếp giáp p-n:
+            <br>• Phân cực thuận (Que Đỏ cắm Anode, Que Đen cắm Cathode): Phản ánh chính xác điện áp rơi <strong>V<sub>F</sub> ≈ 0.58 V – 0.72 V</strong>.
+            <br>• Phân cực ngược (Que Đỏ cắm Cathode, Que Đen cắm Anode): Khóa dòng, màn hình hiển thị <code>O.L</code> (Over Limit).
+          </li>
+          <li><strong>Điện trở (Ω):</strong> Đo giá trị thuần trở của linh kiện; tiếp giáp tốt cho điện trở thuận nhỏ và điện trở ngược vô cùng lớn (<code>O.L</code>).</li>
+          <li><strong>Điện áp DC (V<sub>DC</sub>):</strong> Đo điện áp một chiều khi mạch đang được cấp nguồn điện hoạt động.</li>
+        </ul>
+      </div>
+
+      <div class="highlight-box">
+        ✅ <strong>Tiêu chuẩn Diode TỐT:</strong>
+        <br>• Chiều thuận: Dẫn điện, hiển thị sụt áp tiếp giáp <strong>V<sub>F</sub> ≈ 0.58 V – 0.72 V</strong>.
+        <br>• Chiều ngược: Khóa hoàn toàn, màn hình hiển thị <code>O.L</code>.
+      </div>
+
+      <div class="guide-step">
+        <h3>3. Dấu hiệu Diode HỎNG</h3>
+        <ul>
+          <li><strong>Chập (Short):</strong> 2 chiều thuận và ngược đều dẫn điện, điện áp rơi <strong>≈ 0.000 V</strong> kèm còi kêu BEEP liên tục.</li>
+          <li><strong>Đứt (Open):</strong> 2 chiều thuận và ngược đều không dẫn, màn hình hiển thị <code>O.L</code>.</li>
+        </ul>
+      </div>
+
+      <button style="width: 100%; padding: 10px; background: var(--accent); color: #000; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px;" onclick="toggleModal(false)">
+        Đã hiểu rõ - Bắt đầu thí nghiệm
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* ================= CƠ SỞ DỮ LIỆU & THANG ĐO ================= */
+    const KNOB_MODES = [
+      { mode: 'OFF',   angle: 0,   labelId: 'lbl-OFF' },
+      { mode: 'DIODE', angle: 90,  labelId: 'lbl-DIODE' },
+      { mode: 'RES',   angle: 180, labelId: 'lbl-RES' },
+      { mode: 'VDC',   angle: 270, labelId: 'lbl-VDC' }
+    ];
+    let currentKnobIdx = 1; // Mặc định ở thang DIODE
+    let dmmMode = 'DIODE';
+
+    const DIODE_DB = {
+      D_1N4007: {
+        id: 'D_1N4007',
+        name: 'Diode chỉnh lưu 1N4007',
+        vf: 0.642,
+        desc: 'Vỏ nhựa đen đục (Plastic DO-41), vạch Cathode trắng bạc. Dòng thuận tối đa 1A, điện áp ngược 1000V.',
+        bodyColor: 0x111827,
+        bandColor: 0xe2e8f0,
+        isGlass: false,
+        coreColor: 0x000000
+      },
+      D_1N4148: {
+        id: 'D_1N4148',
+        name: 'Diode tốc độ cao 1N4148',
+        vf: 0.685,
+        desc: 'Vỏ thủy tinh Cam hổ phách (Amber DO-35), vạch Cathode đen tuyền. Chuyển mạch tốc độ siêu nhanh (trr = 4ns).',
+        bodyColor: 0xf97316, // Màu cam hổ phách
+        bandColor: 0x000000,
+        isGlass: true,
+        opacity: 0.72,
+        coreColor: 0xb45309  // Lõi bán dẫn đồng sẫm
+      },
+      DZ_5V1: {
+        id: 'DZ_5V1',
+        name: 'Diode Zener 5.1V',
+        vf: 0.710,
+        vz: 5.1,
+        desc: 'Vỏ thủy tinh Đỏ Ruby (Ruby Red DO-35), vạch Cathode đen đậm. Ổn áp 5.1V khi phân cực ngược.',
+        bodyColor: 0xe11d48, // Màu đỏ ruby
+        bandColor: 0x0f172a,
+        isGlass: true,
+        opacity: 0.76,
+        coreColor: 0x881337  // Lõi tiếp giáp đỏ thẫm
+      }
+    };
+
+    let activeCompKey = 'D_1N4007';
+    let activeDefect = 'NORMAL';
+    let probeRedPin = 'PIN_A';   // Mặc định cắm thuận: Đỏ vào Anode
+    let probeBlackPin = 'PIN_K'; // Đen vào Cathode
+
+    let tempFwdVal = '--';
+    let tempRevVal = '--';
+
+    /* ================= ĐIỀU KHIỂN NÚM XOAY ================= */
+    function rotateKnobNext() {
+      currentKnobIdx = (currentKnobIdx + 1) % KNOB_MODES.length;
+      applyKnobState();
+    }
+
+    function setKnobByMode(modeName) {
+      const idx = KNOB_MODES.findIndex(m => m.mode === modeName);
+      if (idx !== -1) {
+        currentKnobIdx = idx;
+        applyKnobState();
+      }
+    }
+
+    function applyKnobState() {
+      const cur = KNOB_MODES[currentKnobIdx];
+      dmmMode = cur.mode;
+      document.getElementById('rotaryKnob').style.transform = `rotate(${cur.angle}deg)`;
+      document.querySelectorAll('.knob-label').forEach(lbl => lbl.classList.remove('active'));
+      document.getElementById(cur.labelId).classList.add('active');
+      document.getElementById('lcd-mode-txt').innerText = cur.mode === 'DIODE' ? '-|>|-' : cur.mode;
+      evaluateMeasurement();
+    }
+
+    function toggleModal(show) {
+      document.getElementById('guideModal').style.display = show ? 'flex' : 'none';
+    }
+
+    /* ================= KHỞI TẠO 3D THREE.JS ================= */
+    const container = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0e17);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 14, 18);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.maxPolarAngle = Math.PI / 2.1;
+
+    // Thiết lập hệ thống chiếu sáng
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+    scene.add(ambientLight);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
+    dirLight1.position.set(10, 20, 10);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.4);
+    dirLight2.position.set(-10, -10, -5);
+    scene.add(dirLight2);
+
+    /* ================= BREADBOARD & CHÂN TIẾP XÚC ================= */
+    const bbGroup = new THREE.Group();
+    const bbBase = new THREE.Mesh(
+      new THREE.BoxGeometry(16, 0.8, 10),
+      new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3 })
+    );
+    bbGroup.add(bbBase);
+
+    // Lưới lỗ cắm breadboard
+    const pinHoleMat = new THREE.MeshBasicMaterial({ color: 0x334155 });
+    for (let x = -6; x <= 6; x += 1.2) {
+      for (let z = -3.5; z <= 3.5; z += 1.2) {
+        const hole = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.82, 0.35), pinHoleMat);
+        hole.position.set(x, 0.05, z);
+        bbGroup.add(hole);
+      }
+    }
+    scene.add(bbGroup);
+
+    // 2 Điểm tiếp xúc kim loại trên bo mạch: Anode trái (-2.5) và Cathode phải (+2.5)
+    const pinGeo = new THREE.CylinderGeometry(0.2, 0.2, 1.2, 16);
+    const pinMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.1 });
+
+    const contactPinA = new THREE.Mesh(pinGeo, pinMat);
+    contactPinA.position.set(-2.5, 0.6, 0);
+    bbGroup.add(contactPinA);
+
+    const contactPinK = new THREE.Mesh(pinGeo, pinMat);
+    contactPinK.position.set(2.5, 0.6, 0);
+    bbGroup.add(contactPinK);
+
+    /* ================= TẠO MÔ HÌNH 3D DIODE ================= */
+    let diodeMeshGroup = new THREE.Group();
+    scene.add(diodeMeshGroup);
+
+    function build3DDiode() {
+      while(diodeMeshGroup.children.length > 0) {
+        diodeMeshGroup.remove(diodeMeshGroup.children[0]);
+      }
+
+      const d = DIODE_DB[activeCompKey];
+
+      // Thân diode chính
+      const bodyGeo = new THREE.CylinderGeometry(0.55, 0.55, 2.6, 32);
+      bodyGeo.rotateZ(Math.PI / 2);
+      
+      let bodyMat;
+      if (d.isGlass) {
+        bodyMat = new THREE.MeshPhysicalMaterial({
+          color: d.bodyColor,
+          roughness: 0.15,
+          transmission: 0.65,
+          thickness: 0.9,
+          transparent: true,
+          opacity: d.opacity,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.1
+        });
+      } else {
+        bodyMat = new THREE.MeshStandardMaterial({
+          color: d.bodyColor,
+          roughness: 0.5
+        });
+      }
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      body.position.y = 1.1;
+      diodeMeshGroup.add(body);
+
+      // Lõi bán dẫn bên trong cho Diode thủy tinh
+      if (d.isGlass) {
+        const coreGeo = new THREE.CylinderGeometry(0.22, 0.22, 1.8, 16);
+        coreGeo.rotateZ(Math.PI / 2);
+        const coreMat = new THREE.MeshStandardMaterial({ color: d.coreColor, metalness: 0.8, roughness: 0.3 });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        core.position.y = 1.1;
+        diodeMeshGroup.add(core);
+      }
+
+      // Vạch phân cực Cathode (K) lệch về cực bên phải (x = 0.85)
+      const bandGeo = new THREE.CylinderGeometry(0.56, 0.56, 0.35, 32);
+      bandGeo.rotateZ(Math.PI / 2);
+      const bandMat = new THREE.MeshBasicMaterial({ color: d.bandColor });
+      const band = new THREE.Mesh(bandGeo, bandMat);
+      band.position.set(0.85, 1.1, 0);
+      diodeMeshGroup.add(band);
+
+      // Chân kim loại
+      const legMat = new THREE.MeshStandardMaterial({ color: 0xcfd8dc, metalness: 0.9, roughness: 0.15 });
+      const legA = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.6, 8), legMat);
+      legA.position.set(-2.5, 0.8, 0);
+      const legK = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.6, 8), legMat);
+      legK.position.set(2.5, 0.8, 0);
+      diodeMeshGroup.add(legA, legK);
+
+      // Text nhãn cực A / K
+      createLabelSprite("Anode (A)", -2.5, 2.2, 0, "#38bdf8");
+      createLabelSprite("Cathode (K) [Vạch]", 2.5, 2.2, 0, "#facc15");
+    }
+
+    let activeLabels = [];
+    function createLabelSprite(text, x, y, z, color) {
+      activeLabels.forEach(l => scene.remove(l));
+      activeLabels = [];
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 256; canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = color;
+      ctx.font = 'bold 22px Segoe UI';
+      ctx.textAlign = 'center';
+      ctx.fillText(text, 128, 40);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
+      sprite.position.set(x, y, z);
+      sprite.scale.set(3, 0.75, 1);
+      scene.add(sprite);
+      activeLabels.push(sprite);
+    }
+
+    /* ================= QUE ĐO 3D ================= */
+    function createProbeMesh(colorHex) {
+      const pGroup = new THREE.Group();
+      const handle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.22, 0.22, 2.5, 16),
+        new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.4 })
+      );
+      handle.position.y = 1.8;
+      const tip = new THREE.Mesh(
+        new THREE.ConeGeometry(0.08, 0.7, 16),
+        new THREE.MeshStandardMaterial({ color: 0xf1f5f9, metalness: 0.95 })
+      );
+      tip.rotation.x = Math.PI;
+      tip.position.y = 0.35;
+      pGroup.add(handle, tip);
+      return pGroup;
+    }
+
+    const probeRedMesh = createProbeMesh(0xdc2626);
+    scene.add(probeRedMesh);
+
+    const probeBlackMesh = createProbeMesh(0x0f172a);
+    scene.add(probeBlackMesh);
+
+    /* ================= ĐIỀU KHIỂN ĐO & CẮM QUE ================= */
+    function cycleProbe(color) {
+      if (color === 'RED') {
+        if (!probeRedPin) probeRedPin = 'PIN_A';
+        else if (probeRedPin === 'PIN_A') probeRedPin = 'PIN_K';
+        else probeRedPin = null;
+      } else {
+        if (!probeBlackPin) probeBlackPin = 'PIN_K';
+        else if (probeBlackPin === 'PIN_K') probeBlackPin = 'PIN_A';
+        else probeBlackPin = null;
+      }
+      updateProbePositions3D();
+      evaluateMeasurement();
+    }
+
+    function quickBias(type) {
+      if (type === 'FWD') {
+        probeRedPin = 'PIN_A';
+        probeBlackPin = 'PIN_K';
+      } else {
+        probeRedPin = 'PIN_K';
+        probeBlackPin = 'PIN_A';
+      }
+      updateProbePositions3D();
+      evaluateMeasurement();
+    }
+
+    function updateProbePositions3D() {
+      if (probeRedPin === 'PIN_A') probeRedMesh.position.set(-2.5, 0.7, 0);
+      else if (probeRedPin === 'PIN_K') probeRedMesh.position.set(2.5, 0.7, 0);
+      else probeRedMesh.position.set(-5, 0, 5);
+
+      if (probeBlackPin === 'PIN_A') probeBlackMesh.position.set(-2.5, 0.7, 0);
+      else if (probeBlackPin === 'PIN_K') probeBlackMesh.position.set(2.5, 0.7, 0);
+      else probeBlackMesh.position.set(5, 0, 5);
+
+      document.getElementById('lblProbeRed').innerText = probeRedPin ? (probeRedPin === 'PIN_A' ? 'Anode (A)' : 'Cathode (K)') : 'Chưa cắm';
+      document.getElementById('lblProbeBlack').innerText = probeBlackPin ? (probeBlackPin === 'PIN_A' ? 'Anode (A)' : 'Cathode (K)') : 'Chưa cắm';
+    }
+
+    function changeActiveComponent() {
+      activeCompKey = document.getElementById('compPicker').value;
+      build3DDiode();
+      updateInfoText();
+      evaluateMeasurement();
+    }
+
+    function applyDefect() {
+      activeDefect = document.getElementById('defectPicker').value;
+      updateInfoText();
+      evaluateMeasurement();
+    }
+
+    function updateInfoText() {
+      const d = DIODE_DB[activeCompKey];
+      let badge = '<span class="status-badge badge-ok">TỐT (Bình thường)</span>';
+      if (activeDefect === 'SHORT') badge = '<span class="status-badge badge-short">CHẾT CHẬM (Ngắn mạch)</span>';
+      if (activeDefect === 'OPEN') badge = '<span class="status-badge badge-open">CHẾT ĐỨT (Hở mạch)</span>';
+
+      document.getElementById('compDiagnostics').innerHTML = `
+        <strong>${d.name}</strong><br>
+        <em>${d.desc}</em><br>
+        Mô phỏng: ${badge}
+      `;
+    }
+
+    /* ĐÁNH GIÁ KẾT QUẢ ĐO VÀ HIỂN THỊ TRÊN LCD */
+    function evaluateMeasurement() {
+      const lcd = document.getElementById('lcd-val');
+      const lcdState = document.getElementById('lcd-state-txt');
+
+      if (dmmMode === 'OFF') {
+        lcd.innerText = 'OFF';
+        lcdState.innerText = '';
+        return;
+      }
+
+      if (probeRedPin && probeBlackPin && (probeRedPin === probeBlackPin)) {
+        lcd.innerText = '0.000 V';
+        lcdState.innerText = 'CHẬP QUE ĐO';
+        return;
+      }
+
+      const isConnected = (probeRedPin === 'PIN_A' && probeBlackPin === 'PIN_K') || 
+                          (probeRedPin === 'PIN_K' && probeBlackPin === 'PIN_A');
+      if (!isConnected) {
+        lcd.innerText = (dmmMode === 'DIODE' || dmmMode === 'RES') ? 'O.L' : '0.000 V';
+        lcdState.innerText = 'HỞ MẠCH';
+        return;
+      }
+
+      const isForward = (probeRedPin === 'PIN_A' && probeBlackPin === 'PIN_K');
+      const comp = DIODE_DB[activeCompKey];
+
+      if (activeDefect === 'OPEN') {
+        lcd.innerText = 'O.L';
+        lcdState.innerText = 'ĐỨT TIẾP GIÁP';
+        return;
+      }
+
+      if (activeDefect === 'SHORT') {
+        if (dmmMode === 'DIODE' || dmmMode === 'RES') {
+          lcd.innerText = '0.001 V';
+          lcdState.innerText = 'BEEP! (CHẬP)';
+        } else {
+          lcd.innerText = '0.000 V';
+          lcdState.innerText = 'NGẮN MẠCH';
+        }
+        return;
+      }
+
+      if (dmmMode === 'DIODE') {
+        if (isForward) {
+          lcd.innerText = comp.vf.toFixed(3) + ' V';
+          lcdState.innerText = 'THUẬN (DẪN)';
+        } else {
+          lcd.innerText = 'O.L';
+          lcdState.innerText = 'NGƯỢC (KHÓA)';
+        }
+      } else if (dmmMode === 'RES') {
+        if (isForward) {
+          lcd.innerText = '820 Ω';
+          lcdState.innerText = 'R_THUẬN NHỎ';
+        } else {
+          lcd.innerText = 'O.L';
+          lcdState.innerText = 'R_NGƯỢC = ∞';
+        }
+      } else if (dmmMode === 'VDC') {
+        lcd.innerText = '0.000 V';
+        lcdState.innerText = 'KHÔNG CÓ NGUỒN';
+      }
+    }
+
+    /* GHI NHẬN SỐ LIỆU VÀO BẢNG 1.2 */
+    function recordMeasurement(type) {
+      const currentReading = document.getElementById('lcd-val').innerText;
+      if (type === 'FWD') {
+        tempFwdVal = currentReading;
+        alert(`Đã lưu áp thuận: ${tempFwdVal}`);
+      } else {
+        tempRevVal = currentReading;
+        alert(`Đã lưu áp ngược: ${tempRevVal}`);
+      }
+    }
+
+    function saveToTable() {
+      const row = document.getElementById(`row_${activeCompKey}`);
+      if (!row) return;
+
+      const fwdCell = row.querySelector('.fwd-val');
+      const revCell = row.querySelector('.rev-val');
+      const statusCell = row.querySelector('.status-val');
+      const evalCell = row.querySelector('.eval-val');
+
+      fwdCell.innerText = tempFwdVal !== '--' ? tempFwdVal : document.getElementById('lcd-val').innerText;
+      revCell.innerText = tempRevVal !== '--' ? tempRevVal : (tempFwdVal !== '--' ? 'O.L' : '--');
+
+      let statusText = 'Tốt';
+      let evalColor = '#4ade80';
+
+      if (activeDefect === 'SHORT') {
+        statusText = 'Hỏng (Chập)';
+        evalColor = '#f87171';
+      } else if (activeDefect === 'OPEN') {
+        statusText = 'Hỏng (Đứt)';
+        evalColor = '#facc15';
+      }
+
+      statusCell.innerHTML = `<span style="color:${evalColor}; font-weight:bold;">${statusText}</span>`;
+      evalCell.innerHTML = activeDefect === 'NORMAL' 
+        ? '<span style="color:#4ade80; font-weight:bold;">ĐẠT CHUẨN</span>' 
+        : '<span style="color:#f87171; font-weight:bold;">LOẠI BỎ</span>';
+
+      alert(`Đã ghi kết quả kiểm tra của ${DIODE_DB[activeCompKey].name} vào Bảng 1.2!`);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Khởi chạy ban đầu
+    build3DDiode();
+    updateInfoText();
+    updateProbePositions3D();
+    evaluateMeasurement();
+    animate();
+  </script>
+</body>
+</html>

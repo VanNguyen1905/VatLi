@@ -1,0 +1,569 @@
+{
+  "schemaVersion": 1,
+  "source": "Giáo án Vật lý bán dẫn & Linh kiện, trang 5–26",
+  "generatedFor": "Virtual Lab Academy",
+  "note": "Đặc tả 3D; chưa có FBX/GLB được tạo",
+  "equipment": [
+    {
+      "id": "probe-pair",
+      "name": "Bộ que đo đỏ/đen",
+      "quantity": 1,
+      "specification": "Đầu kim cầm được, mô phỏng tiếp xúc",
+      "category": "CONNECTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "snap đầu dây vào terminal",
+        "rút dây",
+        "kiểm tra liên thông"
+      ]
+    },
+    {
+      "id": "breadboard",
+      "name": "Breadboard",
+      "quantity": 1,
+      "specification": "Lỗ cắm và rail nguồn có quan hệ điện chính xác",
+      "category": "CONNECTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "cắm/rút linh kiện",
+        "mạng liên thông hàng lỗ",
+        "rail nguồn"
+      ]
+    },
+    {
+      "id": "scope-probes",
+      "name": "Đầu đo hiện sóng",
+      "quantity": 2,
+      "specification": "Mass kẹp chung thiết bị, cặp đầu đo",
+      "category": "CONNECTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "snap đầu dây vào terminal",
+        "rút dây",
+        "kiểm tra liên thông"
+      ]
+    },
+    {
+      "id": "jumper",
+      "name": "Dây jumper",
+      "quantity": 12,
+      "specification": "Dây nối nhiều màu, hai đầu có điểm kết nối",
+      "category": "CONNECTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "snap đầu dây vào terminal",
+        "rút dây",
+        "kiểm tra liên thông"
+      ]
+    },
+    {
+      "id": "dmm",
+      "name": "Đồng hồ vạn năng số",
+      "quantity": 1,
+      "specification": "DCV/ACV/Ω/diode/điện dung; cổng COM, VΩ, mA; mẫu 3D có núm và que đo",
+      "category": "INSTRUMENT",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "xoay núm",
+        "cắm cổng COM/VΩ/mA",
+        "điều khiển 2 que đo",
+        "màn hình LCD"
+      ]
+    },
+    {
+      "id": "oscilloscope",
+      "name": "Máy hiện sóng hai kênh",
+      "quantity": 1,
+      "specification": "CH1/CH2, AC/DC coupling, time/div, volt/div và mass chung",
+      "category": "INSTRUMENT",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chuyển CH1/CH2",
+        "coupling AC/DC",
+        "volt/div",
+        "time/div",
+        "mass chung",
+        "hiển thị waveform"
+      ]
+    },
+    {
+      "id": "isolated-ac-9v",
+      "name": "Nguồn AC 9 V cách ly",
+      "quantity": 1,
+      "specification": "Chỉ cung cấp thứ cấp hạ áp; không cho chạm điện lưới 220 V",
+      "category": "INSTRUMENT",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "dc-psu",
+      "name": "Nguồn DC điều chỉnh",
+      "quantity": 1,
+      "specification": "0–30 V, giới hạn dòng, công tắc và hai cọc đầu ra",
+      "category": "INSTRUMENT",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "điều chỉnh áp",
+        "giới hạn dòng",
+        "bật/tắt công suất",
+        "hai cực đầu ra"
+      ]
+    },
+    {
+      "id": "hfe-socket",
+      "name": "Ổ đo hFE NPN/PNP",
+      "quantity": 1,
+      "specification": "Chân E/B/C theo ký hiệu của đồng hồ",
+      "category": "INSTRUMENT",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "pot-100k",
+      "name": "Biến trở 100 kΩ",
+      "quantity": 1,
+      "specification": "Có trục vặn/điểm giữa",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "vặn núm/chiết áp",
+        "điều chỉnh điện trở",
+        "ba terminal"
+      ]
+    },
+    {
+      "id": "inductor-10mH",
+      "name": "Cuộn cảm 10 mH",
+      "quantity": 1,
+      "specification": "Có điện trở thuần nội tại",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-100k",
+      "name": "Điện trở 100k",
+      "quantity": 2,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-100R",
+      "name": "Điện trở 100R",
+      "quantity": 2,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-10k",
+      "name": "Điện trở 10k",
+      "quantity": 2,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-1k",
+      "name": "Điện trở 1k",
+      "quantity": 2,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-1M",
+      "name": "Điện trở 1M",
+      "quantity": 1,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-220R",
+      "name": "Điện trở 220R",
+      "quantity": 2,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-2k2",
+      "name": "Điện trở 2k2",
+      "quantity": 1,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-470R",
+      "name": "Điện trở 470R",
+      "quantity": 2,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "resistor-47k",
+      "name": "Điện trở 47k",
+      "quantity": 1,
+      "specification": "Mã màu, hai chân, trị số và dung sai cấu hình",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "ldr",
+      "name": "Quang trở LDR",
+      "quantity": 1,
+      "specification": "Điện trở phụ thuộc illuminance",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "capacitor-1000uF-25V",
+      "name": "Tụ 1000uF-25V",
+      "quantity": 1,
+      "specification": "Giá trị điện dung, ESR/rò, điện áp định mức và cực tính nếu là tụ hóa",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "capacitor-100nF",
+      "name": "Tụ 100nF",
+      "quantity": 1,
+      "specification": "Giá trị điện dung, ESR/rò, điện áp định mức và cực tính nếu là tụ hóa",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "capacitor-100uF-25V",
+      "name": "Tụ 100uF-25V",
+      "quantity": 1,
+      "specification": "Giá trị điện dung, ESR/rò, điện áp định mức và cực tính nếu là tụ hóa",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "capacitor-10uF-25V",
+      "name": "Tụ 10uF-25V",
+      "quantity": 1,
+      "specification": "Giá trị điện dung, ESR/rò, điện áp định mức và cực tính nếu là tụ hóa",
+      "category": "PASSIVE",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "bjt-bc547",
+      "name": "BC547 NPN",
+      "quantity": 2,
+      "specification": "Package TO-92 và pinout theo biến thể",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "bjt-bc557",
+      "name": "BC557 PNP",
+      "quantity": 2,
+      "specification": "Package TO-92 và pinout theo biến thể",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "diode-1N4007",
+      "name": "Diode 1N4007",
+      "quantity": 4,
+      "specification": "Đúng vạch cathode, anode/cathode và mô hình điện",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "diode-1N4148",
+      "name": "Diode 1N4148",
+      "quantity": 1,
+      "specification": "Đúng vạch cathode, anode/cathode và mô hình điện",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "diode-Zener-5V1",
+      "name": "Diode Zener-5V1",
+      "quantity": 1,
+      "specification": "Đúng vạch cathode, anode/cathode và mô hình điện",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "jfet-j113",
+      "name": "JFET J113",
+      "quantity": 2,
+      "specification": "Kênh N, D/G/S theo datasheet",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "led-red",
+      "name": "LED đỏ",
+      "quantity": 1,
+      "specification": "Anode/Cathode, mô hình sáng theo dòng",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "mosfet-2n7000",
+      "name": "MOSFET 2N7000",
+      "quantity": 2,
+      "specification": "NMOS, body diode và điện tích gate",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "scr-c106d",
+      "name": "SCR C106D hoặc BT169",
+      "quantity": 1,
+      "specification": "A/K/G, dòng duy trì IH theo model",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "screwdriver",
+      "name": "Tua vít nhỏ",
+      "quantity": 1,
+      "specification": "Tương tác vặn biến trở",
+      "category": "SEMICONDUCTOR",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "cầm và xoay biến trở"
+      ]
+    },
+    {
+      "id": "flashlight",
+      "name": "Đèn chiếu LDR",
+      "quantity": 1,
+      "specification": "Điều chỉnh ánh sáng vật lý trong scene",
+      "category": "TOOL",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chuyển cường độ ánh sáng",
+        "chiếu vào LDR"
+      ]
+    },
+    {
+      "id": "parts-tray",
+      "name": "Khay linh kiện",
+      "quantity": 1,
+      "specification": "Nhãn giá trị để người học lựa chọn",
+      "category": "TOOL",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "chọn linh kiện",
+        "quan sát vật liệu/nhãn",
+        "tiếp điểm điện chính xác",
+        "xoay để xem pinout"
+      ]
+    },
+    {
+      "id": "push-button",
+      "name": "Nút nhấn thường hở",
+      "quantity": 1,
+      "specification": "Có tiếp điểm và trạng thái nhấn",
+      "category": "TOOL",
+      "assetStatus": "NOT_MODELED",
+      "modelPath": null,
+      "interactivity": [
+        "nhấn",
+        "thả",
+        "cặp tiếp điểm"
+      ]
+    }
+  ]
+}

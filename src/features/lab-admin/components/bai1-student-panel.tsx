@@ -1,0 +1,27 @@
+import {useEffect,useRef,useState} from 'react';import {createPortal} from 'react-dom';import {Check,ChevronRight,X} from 'lucide-react';
+import {bai1Chart,bai1Table,bai1Waveform,formatBai1Time,partDefinition,summarizeBai1,type Bai1Part,type Bai1Snapshot,type Bai1Student} from '../bai1-dashboard';
+import {Bai1ScientificChart} from './bai1-scientific-chart';
+export function Bai1StudentPanel({student,part,snapshot,onClose}:{student:Bai1Student;part:Bai1Part;snapshot?:Bai1Snapshot;onClose:()=>void}){
+ const dialog=useRef<HTMLDialogElement>(null),swipe=useRef<{x:number;y:number;time:number}|null>(null),[defect,setDefect]=useState('NORMAL'),[component,setComponent]=useState('R1'),[wave,setWave]=useState('C0');
+ const definition=partDefinition(part),summary=summarizeBai1(part,snapshot),table=bai1Table(part,summary.rows,defect);
+ useEffect(()=>{const prior=document.activeElement as HTMLElement|null,node=dialog.current;if(!node)return;node.showModal();const saved=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{node.close();document.body.style.overflow=saved;prior?.focus();};},[]);
+ return createPortal(<dialog ref={dialog} className="b1-dialog" aria-labelledby="b1-detail-title" onCancel={e=>{e.preventDefault();onClose();}} onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+  <section className="b1-drawer" data-bai1-detail={part}>
+   <header className="b1-drawer-head" onPointerDown={e=>{if(e.pointerType!=='mouse'&&!(e.target as HTMLElement).closest('button')){swipe.current={x:e.clientX,y:e.clientY,time:Date.now()};e.currentTarget.setPointerCapture(e.pointerId);}}} onPointerUp={e=>{const start=swipe.current;swipe.current=null;if(start&&e.clientX-start.x>90&&Math.abs(e.clientY-start.y)<60&&Date.now()-start.time<1200)onClose();}}>
+    <div><p className="b1-eyebrow">HỒ SƠ THỰC HÀNH · {part}</p><h2 id="b1-detail-title">{student.fullName}</h2><p>{student.studentCode} · {student.className||'Chưa khai báo lớp'}</p></div><button type="button" aria-label="Đóng chi tiết sinh viên" onClick={onClose}><X size={20}/></button>
+   </header>
+   <div className="b1-drawer-content"><div className="b1-detail-overview"><div className="b1-ring" style={{background:`conic-gradient(#24e0bd ${summary.percent*3.6}deg,#142d48 0)`}}><div><strong>{snapshot?.hasConfirmed?summary.completed:'—'}<small>/{definition.total}</small></strong><span>trường hợp</span></div></div><div><p className="b1-eyebrow">PHẦN {part.slice(-1)} · BẢNG {definition.table}</p><h3>{definition.title}</h3><p>{snapshot?.hasConfirmed?`${summary.percent}% đã ghi kết quả`:'Chưa xác minh dữ liệu từ server'}</p><p>Ghi đủ chưa đồng nghĩa được giảng viên xác nhận đạt.</p></div></div>
+   {snapshot?.status==='denied'||snapshot?.status==='error'?<p role="alert" className="b1-error">{snapshot.error}</p>:snapshot?.status==='offline'?<p role="status" className="b1-warning">Mất kết nối hoặc đang chờ server. Chỉ giữ các số đo từng được xác nhận.</p>:null}
+   {!student.uid&&<p className="b1-warning">Hồ sơ chưa liên kết Firebase UID. Chưa thể đọc kết quả.</p>}
+   <section className="b1-task-section"><h3>Các trường hợp bắt buộc</h3><p>{part==='B1_P2'?'9 bản ghi ghép thuận/ngược; bảng chuẩn có ba diode theo tình trạng được chọn.':part==='B1_P1'?'18 trường hợp đo, độc lập với 8 bước thao tác.':'Mỗi trường hợp là một bản ghi kết quả đã lưu.'}</p><ul className="b1-tasks">{definition.keys.map(key=>{const row=summary.rows.find(r=>r.key===key);return <li key={key} data-complete={!!row}>{row?<Check size={14}/>:<ChevronRight size={14}/>}<span>{key}</span><small>{row?formatBai1Time(row.serverUpdatedAt):snapshot?.hasConfirmed?'Chưa hoàn thành':'Chưa xác minh'}</small></li>;})}</ul></section>
+   <div className="b1-section-heading"><h3>Bảng kết quả {definition.table}</h3>{part==='B1_P2'&&<label>Tình trạng linh kiện<select aria-label="Tình trạng diode trong chi tiết" value={defect} onChange={e=>setDefect(e.target.value)}><option value="NORMAL">Bình thường</option><option value="SHORT">Chập</option><option value="OPEN">Đứt</option></select></label>}</div>
+   {!summary.rows.length&&<p className="b1-empty">{snapshot?.hasConfirmed?'Chưa có kết quả đã lưu ở phần này.':'Đang chờ dữ liệu Firestore được cấp quyền.'}</p>}
+   <div className="b1-table-scroll" tabIndex={0} aria-label={'Bảng '+definition.table}><table data-bai1-table={definition.table}><thead><tr>{table.headers.map(h=><th key={h} scope="col">{h}</th>)}</tr></thead><tbody>{table.rows.map((r,i)=><tr key={i}>{r.map((c,j)=><td key={j}>{c}</td>)}</tr>)}</tbody></table></div>
+   {part==='B1_P1'&&<label className="b1-inline-field">So sánh linh kiện<select aria-label="Linh kiện biểu đồ Phần 1" value={component} onChange={e=>setComponent(e.target.value)}>{['R1','R2','R3','C1','C2','L'].map(c=><option key={c}>{c}</option>)}</select></label>}
+   <Bai1ScientificChart model={bai1Chart(part,summary.rows,defect,component)}/>
+   {part==='B1_P3'&&<><label className="b1-inline-field">Dạng sóng theo trường hợp<select aria-label="Tụ xem dạng sóng" value={wave} onChange={e=>setWave(e.target.value)}>{[0,10,100,1000].map(c=><option key={c} value={'C'+c}>{c} µF</option>)}</select></label><Bai1ScientificChart model={bai1Waveform(summary.rows,wave)}/></>}
+   <p className="b1-chart-note">Thời gian hiển thị GMT+7. “Ghi phép đo” do máy sinh viên cung cấp; “Server xác nhận” lấy updatedAt của Firestore. Nguồn: users/UID/labProgress/{part}/cases.</p>
+   </div>
+  </section>
+ </dialog>,document.body);
+}

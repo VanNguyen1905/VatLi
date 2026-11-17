@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mô Phỏng 3D Chuẩn Thực Tế: Mạch Chỉnh Lưu Cầu Có Tụ Lọc Nguồn</title>
+  <!-- Thư viện Three.js và OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --panel: rgba(17, 24, 39, 0.94);
+      --accent: #38bdf8;
+      --ch1-color: #facc15; /* Kênh AC Input - Vàng */
+      --ch2-color: #ef4444; /* Kênh DC Output - ĐỎ */
+      --border: #374151;
+      --text: #f9fafb;
+      --text-dim: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; width: 100vw; }
+
+    #webgl-canvas { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+
+    /* Thanh điều khiển trên cùng */
+    .top-bar {
+      position: absolute; top: 12px; left: 16px; right: 16px; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--panel); backdrop-filter: blur(8px);
+      padding: 10px 18px; border-radius: 12px; border: 1px solid var(--border);
+    }
+    .top-bar h1 { font-size: 1.05rem; color: var(--accent); }
+    .top-bar .tips { font-size: 0.8rem; color: var(--text-dim); }
+    .btn-guide {
+      background: #0284c7; color: #fff; border: none; border-radius: 6px;
+      padding: 6px 14px; font-weight: bold; cursor: pointer; font-size: 0.82rem;
+      transition: background 0.2s;
+    }
+    .btn-guide:hover { background: #0369a1; }
+
+    /* Máy hiện sóng Oscilloscope bên trái */
+    .osc-container {
+      position: absolute; top: 75px; left: 16px; z-index: 10;
+      width: 390px; background: #111827; border-radius: 14px; padding: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7); border: 2px solid #374151;
+    }
+    .osc-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px; font-size: 0.8rem; font-weight: 800; color: #cbd5e1;
+      letter-spacing: 1px;
+    }
+    .osc-screen-wrapper {
+      position: relative; width: 100%; height: 185px;
+      background: #040c06; border-radius: 6px; border: 2px solid #1f2937;
+      overflow: hidden;
+    }
+    #oscCanvas { width: 100%; height: 100%; display: block; }
+    
+    .osc-legend {
+      display: flex; justify-content: space-around; margin-top: 6px;
+      font-size: 0.72rem; font-weight: bold;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .dot-ch1 { width: 10px; height: 10px; background: var(--ch1-color); border-radius: 50%; }
+    .dot-ch2 { width: 10px; height: 10px; background: var(--ch2-color); border-radius: 50%; }
+
+    /* Module điều khiển que kẹp đo */
+    .probe-control-box {
+      margin-top: 10px; padding: 8px 10px; background: rgba(31, 41, 55, 0.7);
+      border-radius: 8px; border: 1px solid var(--border); font-size: 0.78rem;
+    }
+    .probe-ctrl-title {
+      font-weight: bold; color: var(--accent); margin-bottom: 6px; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    .probe-row {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
+    }
+    .probe-row:last-child { margin-bottom: 0; }
+    .probe-badge {
+      display: inline-block; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem;
+    }
+    .badge-ch1 { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid #ca8a04; }
+    .badge-ch2 { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #dc2626; }
+
+    .probe-select {
+      width: 65%; padding: 4px 6px; background: #0b0f19; color: white;
+      border: 1px solid #4b5563; border-radius: 4px; font-size: 0.75rem;
+    }
+
+    .osc-stats {
+      margin-top: 8px; padding: 6px 10px; background: rgba(17, 24, 39, 0.9);
+      border-radius: 6px; font-size: 0.73rem; line-height: 1.45; font-family: monospace;
+      color: #e5e7eb; border-left: 3px solid var(--accent);
+    }
+
+    /* Bảng điều khiển bên phải */
+    .control-panel {
+      position: absolute; top: 75px; right: 16px; z-index: 10;
+      width: 320px; background: var(--panel); backdrop-filter: blur(8px);
+      border-radius: 12px; border: 1px solid var(--border); padding: 14px;
+      font-size: 0.85rem;
+    }
+    .sec-title {
+      color: var(--accent); font-weight: bold; margin-bottom: 8px;
+      border-bottom: 1px solid var(--border); padding-bottom: 4px;
+    }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 0.78rem; color: var(--text-dim); margin-bottom: 4px; }
+    select {
+      width: 100%; padding: 6px 10px; background: #0b0f19; color: white;
+      border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem;
+    }
+    .power-btn {
+      width: 100%; padding: 8px; border: none; border-radius: 6px;
+      font-weight: bold; cursor: pointer; margin-top: 6px; font-size: 0.85rem;
+      transition: 0.2s;
+    }
+    .power-on { background: #16a34a; color: white; }
+    .power-off { background: #dc2626; color: white; }
+
+    /* Bảng số liệu phía dưới */
+    .table-container {
+      position: absolute; bottom: 12px; left: 16px; right: 16px; z-index: 10;
+      background: var(--panel); backdrop-filter: blur(8px);
+      border-radius: 12px; border: 1px solid var(--border); padding: 10px 14px;
+      max-height: 165px; overflow-y: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: center; }
+    th, td { border: 1px solid var(--border); padding: 5px; }
+    th { background: #1f2937; color: var(--accent); position: sticky; top: 0; }
+
+    /* Hướng dẫn Popup */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
+      z-index: 100; display: none; align-items: center; justify-content: center;
+    }
+    .modal-box {
+      background: #1f2937; border: 1px solid var(--border); border-radius: 14px;
+      width: 90%; max-width: 650px; max-height: 85vh; overflow-y: auto;
+      padding: 22px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 14px;
+    }
+    .modal-header h2 { font-size: 1.15rem; color: var(--accent); }
+    .btn-close { background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer; }
+    .btn-close:hover { color: #fff; }
+    .guide-step { margin-bottom: 14px; font-size: 0.85rem; line-height: 1.6; color: #e5e7eb; }
+    .guide-step h3 { font-size: 0.95rem; color: #facc15; margin-bottom: 6px; }
+    .guide-step ul { margin-left: 18px; }
+    .guide-step li { margin-bottom: 6px; }
+    .formula-tag {
+      background: rgba(11, 15, 25, 0.85);
+      border: 1px solid #4b5563;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-weight: 600;
+      color: #38bdf8;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WebGL 3D Canvas -->
+  <div id="webgl-canvas"></div>
+
+  <!-- Thanh tiêu đề phía trên -->
+  <div class="top-bar">
+    <div>
+      <h1>BÀI 1 - BƯỚC 3: MẠCH CHỈNH LƯU CẦU CÓ TỤ LỌC NGUỒN (3D)</h1>
+      <div class="tips">Xoay: Chuột trái | Di chuyển: Chuột phải | Thu phóng: Lăn chuột</div>
+    </div>
+    <button class="btn-guide" onclick="toggleModal(true)">📖 Hướng Dẫn & Chuẩn Đoán</button>
+  </div>
+
+  <!-- Máy hiện sóng Oscilloscope 2 Kênh -->
+  <div class="osc-container">
+    <div class="osc-header">
+      <span>DIGITAL OSCILLOSCOPE (2-CHANNEL)</span>
+      <span id="oscStatusBadge" style="color: #22c55e;">RUNNING</span>
+    </div>
+    <div class="osc-screen-wrapper">
+      <canvas id="oscCanvas" width="390" height="185"></canvas>
+    </div>
+    <div class="osc-legend">
+      <div class="legend-item"><div class="dot-ch1"></div> CH1: AC Vào (Secondary)</div>
+      <div class="legend-item"><div class="dot-ch2"></div> CH2: DC Ra (Sau Tụ & Tải)</div>
+    </div>
+
+    <!-- KHỐI ĐIỀU KHIỂN VỊ TRÍ KẸP QUE ĐO -->
+    <div class="probe-control-box">
+      <div class="probe-ctrl-title">
+        <span>VỊ TRÍ CẮM QUE ĐO OSCILLOSCOPE</span>
+        <span style="font-size: 0.68rem; color: #9ca3af;">(Kiểm tra kẹp tiếp xúc)</span>
+      </div>
+      <div class="probe-row">
+        <span class="probe-badge badge-ch1">Que Vàng CH1</span>
+        <select class="probe-select" id="selProbeCH1" onchange="updateProbeConnections()">
+          <option value="CORRECT" selected>Kẹp ĐÚNG: Thứ cấp AC (Biến áp)</option>
+          <option value="UNCLIPPED">Chưa kẹp (Thả tự do ngoài bo)</option>
+          <option value="SHORT_GND">Kẹp SAI: Chập vào mass đất (GND 0V)</option>
+          <option value="REVERSED_DC">Kẹp NHẦM: Vào đầu ra DC sau nắn</option>
+        </select>
+      </div>
+      <div class="probe-row">
+        <span class="probe-badge badge-ch2">Que Đỏ CH2</span>
+        <select class="probe-select" id="selProbeCH2" onchange="updateProbeConnections()">
+          <option value="CORRECT" selected>Kẹp ĐÚNG: Hai đầu Tải & Tụ lọc</option>
+          <option value="UNCLIPPED">Chưa kẹp (Thả tự do ngoài bo)</option>
+          <option value="SHORT_GND">Kẹp SAI: Chập vào mass đất (GND 0V)</option>
+          <option value="WRONG_POLARITY">Kẹp SAI: Ngược cực (+/- Tụ lọc)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="osc-stats" id="oscMetrics">
+      Đang tính toán các thông số sóng...
+    </div>
+  </div>
+
+  <!-- Bảng Tham Số Điều Khiển Thí Nghiệm Bên Phải -->
+  <div class="control-panel">
+    <div class="sec-title">1. Biến Áp Hạ Thế (Transformer)</div>
+    <div class="form-group">
+      <label>Điện áp thứ cấp AC:</label>
+      <select id="selVac" onchange="updateCircuitParams()">
+        <option value="9">9 VAC (Hiệu dụng ~ 9V RMS)</option>
+        <option value="12" selected>12 VAC (Hiệu dụng ~ 12V RMS)</option>
+        <option value="5">5 VAC (Hiệu dụng ~ 5V RMS)</option>
+      </select>
+    </div>
+
+    <div class="sec-title">2. Tụ Lọc Hóa (Đen Chuẩn Thực Tế)</div>
+    <div class="form-group">
+      <label>Dung lượng tụ lọc (C1):</label>
+      <select id="selCap" onchange="updateCapacitor()">
+        <option value="0">Không gắn tụ (C = 0 µF) - Nhấp nhô toàn kỳ</option>
+        <option value="10">Tụ hóa 10 µF / 25V</option>
+        <option value="100" selected>Tụ hóa 100 µF / 25V</option>
+        <option value="1000">Tụ hóa 1000 µF / 25V (Lọc rất phẳng)</option>
+      </select>
+    </div>
+
+    <div class="sec-title">3. Điện Trở Tải R (Mã 4 Vạch Màu)</div>
+    <div class="form-group">
+      <label>Trị số điện trở tải (Rload):</label>
+      <select id="selRes" onchange="updateResistorModel()">
+        <option value="470">470 Ω (Vàng - Tím - Nâu - Vàng)</option>
+        <option value="1000" selected>1 kΩ (Nâu - Đen - Đỏ - Vàng)</option>
+        <option value="4700">4.7 kΩ (Vàng - Tím - Đỏ - Vàng)</option>
+      </select>
+    </div>
+
+    <div class="sec-title">4. Trạng Thái Thí Nghiệm</div>
+    <button class="power-btn power-on" id="btnPower" onclick="togglePower()">TẮT NGUỒN CẤP (AC ON)</button>
+    <button style="width: 100%; padding: 8px; background: var(--accent); color: #000; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 8px;" onclick="saveRowToReport()">
+      + Ghi Kết Quả Vào Báo Cáo
+    </button>
+  </div>
+
+  <!-- Bảng số liệu ghi chép kết quả -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Lần đo</th>
+          <th>Tình trạng que đo</th>
+          <th>Điện áp nguồn AC</th>
+          <th>Tụ lọc C</th>
+          <th>Điện trở tải R</th>
+          <th>Điện áp đỉnh Vp(in)</th>
+          <th>Điện áp DC trung bình</th>
+          <th>Độ gợn Vripple (p-p)</th>
+          <th>Đánh giá đo lường</th>
+        </tr>
+      </thead>
+      <tbody id="tblReportBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Cửa sổ Modal Hướng dẫn -->
+  <div class="modal-overlay" id="guideModal" onclick="if(event.target === this) toggleModal(false)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>HƯỚNG DẪN THÍ NGHIỆM CHỈNH LƯU CẦU CÓ TỤ LỌC</h2>
+        <button class="btn-close" onclick="toggleModal(false)">&times;</button>
+      </div>
+      <div class="guide-step">
+        <h3>1. Nguyên lý chỉnh lưu cầu (Bridge Rectifier)</h3>
+        <p>Mạch sử dụng 4 diode 1N4007 mắc dạng hình thoi đối xứng: Ở mỗi nửa chu kỳ AC, luôn có 2 diode phân cực thuận luân phiên dẫn dòng, nắn toàn bộ sóng hình sin thành xung điện một chiều cùng chiều với tần số gấp đôi (100 Hz).</p>
+      </div>
+      <div class="guide-step">
+        <h3>2. Vai trò của tụ lọc (Capacitive Filter)</h3>
+        <ul>
+          <li><strong>Khi không có tụ (<em>C</em> = 0 µF):</strong> Dạng sóng ra là các nửa cung sin nối tiếp liên tục, rơi về 0V ở mỗi chu kỳ.</li>
+          <li><strong>Khi có tụ lọc (<em>C</em> = 10, 100, 1000 µF):</strong> Tụ nạp điện nhanh lên điện áp đỉnh <span class="formula-tag"><em>V</em><sub>peak</sub> ≈ <em>V</em><sub>max</sub> − 2<em>V</em><sub>D</sub></span>, sau đó phóng điện từ từ qua tải <span class="formula-tag"><em>R</em><sub>load</sub></span> khi điện áp AC giảm xuống, giúp làm phẳng dòng DC.</li>
+          <li><strong>Độ gợn sóng:</strong> <span class="formula-tag"><em>V</em><sub>ripple</sub> ≈ <em>I</em><sub>load</sub> / (2<em>f</em> · <em>C</em>)</span>. Do đó, dung lượng tụ <span class="formula-tag"><em>C</em></span> càng lớn thì độ gợn càng nhỏ, điện áp DC càng phẳng.</li>
+        </ul>
+      </div>
+      <div class="guide-step">
+        <h3>3. Các lỗi thường gặp khi kẹp que đo máy hiện sóng (Oscilloscope)</h3>
+        <ul>
+          <li><strong>Chưa kẹp que đo:</strong> Kênh không thu được tín hiệu, chỉ có đường ngang 0V tĩnh.</li>
+          <li><strong>Kẹp chập vào mass (GND):</strong> Màn hình chỉ nhận điện áp 0V, mất hoàn toàn tín hiệu cần khảo sát.</li>
+          <li><strong>Kẹp ngược cực que đo DC:</strong> Dạng sóng DC bị đảo chiều âm hoặc đo sai lệch giá trị thực.</li>
+        </ul>
+      </div>
+      <button style="width: 100%; padding: 10px; background: var(--accent); color: #000; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px;" onclick="toggleModal(false)">
+        Đã hiểu - Bắt đầu thí nghiệm
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* ================= 1. THAM SỐ TOÁN HỌC VÀ TRẠNG THÁI MẠCH ================= */
+    let isPowered = true;
+    let vacRms = 12;        // V_RMS thứ cấp
+    let capValue = 100;     // uF (0, 10, 100, 1000)
+    let resValue = 1000;    // Ohm (470, 1000, 4700)
+    const FREQ = 50;        // 50Hz lưới điện VN
+    const DIODE_DROP = 0.7; // Sụt áp trên mỗi diode Si
+
+    let probeCH1State = 'CORRECT'; // CORRECT, UNCLIPPED, SHORT_GND, REVERSED_DC
+    let probeCH2State = 'CORRECT'; // CORRECT, UNCLIPPED, SHORT_GND, WRONG_POLARITY
+
+    let currentMetrics = { vpAc: 0, vpeakDc: 0, vdcAvg: 0, vRipple: 0 };
+
+    function togglePower() {
+      isPowered = !isPowered;
+      const btn = document.getElementById('btnPower');
+      const badge = document.getElementById('oscStatusBadge');
+      if (isPowered) {
+        btn.innerText = 'TẮT NGUỒN CẤP (AC ON)';
+        btn.className = 'power-btn power-on';
+        badge.innerText = 'RUNNING';
+        badge.style.color = '#22c55e';
+      } else {
+        btn.innerText = 'BẬT NGUỒN CẤP (AC OFF)';
+        btn.className = 'power-btn power-off';
+        badge.innerText = 'STOPPED';
+        badge.style.color = '#ef4444';
+      }
+    }
+
+    function toggleModal(show) {
+      document.getElementById('guideModal').style.display = show ? 'flex' : 'none';
+    }
+
+    function updateCircuitParams() {
+      vacRms = parseFloat(document.getElementById('selVac').value);
+      resValue = parseFloat(document.getElementById('selRes').value);
+    }
+
+    function updateCapacitor() {
+      capValue = parseFloat(document.getElementById('selCap').value);
+      build3DCapacitor();
+      updateCircuitParams();
+    }
+
+    function updateProbeConnections() {
+      probeCH1State = document.getElementById('selProbeCH1').value;
+      probeCH2State = document.getElementById('selProbeCH2').value;
+      positionProbes3D();
+    }
+
+    /* ================= 2. KHỞI TẠO ĐỒ HỌA 3D VỚI THREE.JS ================= */
+    const container = document.getElementById('webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0e131f);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 24, 28);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.maxPolarAngle = Math.PI / 2.05;
+
+    // Chiếu sáng môi trường
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+    scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
+    dirLight1.position.set(15, 25, 15);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x90b0e0, 0.4);
+    dirLight2.position.set(-15, 15, -10);
+    scene.add(dirLight2);
+
+    /* --- VẬT LIỆU CHUẨN THỰC TẾ --- */
+    const metalSilverMat = new THREE.MeshStandardMaterial({ color: 0xd1d5db, metalness: 0.9, roughness: 0.2 });
+    const metalLeadMat = new THREE.MeshStandardMaterial({ color: 0x9ca3af, metalness: 0.85, roughness: 0.35 });
+    const wireRedMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.4 });
+    const wireBlackMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.4 });
+
+    /* 1. BREADBOARD TRẮNG THỰC TẾ */
+    const bbGroup = new THREE.Group();
+    const bbBase = new THREE.Mesh(
+      new THREE.BoxGeometry(22, 0.85, 13),
+      new THREE.MeshStandardMaterial({ color: 0xf3f4f6, roughness: 0.45 })
+    );
+    bbGroup.add(bbBase);
+
+    // Kẻ vạch nguồn đỏ (+) và xanh dương (-) dọc 2 bên biên
+    const lineRed1 = new THREE.Mesh(new THREE.BoxGeometry(20, 0.86, 0.1), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+    lineRed1.position.set(0, 0.01, -5.6);
+    const lineBlue1 = new THREE.Mesh(new THREE.BoxGeometry(20, 0.86, 0.1), new THREE.MeshBasicMaterial({ color: 0x2563eb }));
+    lineBlue1.position.set(0, 0.01, -4.8);
+
+    const lineRed2 = new THREE.Mesh(new THREE.BoxGeometry(20, 0.86, 0.1), new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+    lineRed2.position.set(0, 0.01, 4.8);
+    const lineBlue2 = new THREE.Mesh(new THREE.BoxGeometry(20, 0.86, 0.1), new THREE.MeshBasicMaterial({ color: 0x2563eb }));
+    lineBlue2.position.set(0, 0.01, 5.6);
+
+    bbGroup.add(lineRed1, lineBlue1, lineRed2, lineBlue2);
+
+    // Lưới lỗ breadboard
+    const holeMat = new THREE.MeshBasicMaterial({ color: 0x374151 });
+    for (let x = -9; x <= 9; x += 1.0) {
+      for (let z = -4.2; z <= 4.2; z += 1.0) {
+        if (Math.abs(z) < 0.6) continue;
+        const hole = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.87, 0.3), holeMat);
+        hole.position.set(x, 0.05, z);
+        bbGroup.add(hole);
+      }
+    }
+    scene.add(bbGroup);
+
+    /* 2. BIẾN ÁP HẠ THẾ THỰC TẾ */
+    const transGroup = new THREE.Group();
+    const frameGeo = new THREE.BoxGeometry(4.4, 3.4, 4.0);
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x9ca3af, metalness: 0.85, roughness: 0.3 });
+    const transFrame = new THREE.Mesh(frameGeo, frameMat);
+    transFrame.position.set(-8.2, 2.1, -1);
+
+    const coreGeo = new THREE.BoxGeometry(4.0, 3.0, 3.8);
+    const coreMat = new THREE.MeshStandardMaterial({ color: 0x374151, metalness: 0.7, roughness: 0.5 });
+    const transCore = new THREE.Mesh(coreGeo, coreMat);
+    transCore.position.set(-8.2, 2.1, -1);
+
+    const coilGeo = new THREE.CylinderGeometry(1.4, 1.4, 3.9, 24);
+    const coilMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.35 });
+    const transCoil = new THREE.Mesh(coilGeo, coilMat);
+    transCoil.rotation.x = Math.PI / 2;
+    transCoil.position.set(-8.2, 2.1, -1);
+
+    const bracketGeo = new THREE.BoxGeometry(1.2, 0.15, 4.4);
+    const bracket = new THREE.Mesh(bracketGeo, metalSilverMat);
+    bracket.position.set(-8.2, 0.5, -1);
+
+    // Dây dẫn từ thứ cấp biến áp đưa vào đỉnh trái & đỉnh trên của hình thoi
+    const wire1 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 4.2), wireRedMat);
+    wire1.position.set(-4.8, 0.6, -1.3);
+    wire1.rotation.z = Math.PI / 2.5;
+    wire1.rotation.y = 0.2;
+
+    const wire2 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 4.8), wireBlackMat);
+    wire2.position.set(-4.5, 0.6, 1.2);
+    wire2.rotation.z = Math.PI / 2.3;
+    wire2.rotation.y = -0.4;
+
+    transGroup.add(transFrame, transCore, transCoil, bracket, wire1, wire2);
+    scene.add(transGroup);
+
+    /* 3. CẦU 4 DIODE 1N4007 MẮC HÌNH THOI CHUẨN THỰC TẾ (DIAMOND BRIDGE) */
+    function createDiamondDiode(x1, z1, x2, z2) {
+      const g = new THREE.Group();
+      
+      const dx = x2 - x1;
+      const dz = z2 - z1;
+      const len = Math.sqrt(dx * dx + dz * dz);
+      const angleY = Math.atan2(dz, dx);
+
+      // Thân nhựa đúc Epoxy đen nhám DO-41
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.6 });
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 1.35, 24), bodyMat);
+      body.rotation.z = Math.PI / 2;
+
+      // Vạch bạc nhận diện cực Cathode (K)
+      const bandMat = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, metalness: 0.6, roughness: 0.3 });
+      const band = new THREE.Mesh(new THREE.CylinderGeometry(0.325, 0.325, 0.22, 24), bandMat);
+      band.rotation.z = Math.PI / 2;
+      band.position.set(0.42, 0, 0); // Lệch về phía cực Cathode (đầu dương)
+
+      // Chân kim loại cắm xuống lỗ bo mạch
+      const leg1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.75), metalLeadMat);
+      leg1.position.set(-len / 2 + 0.15, -0.38, 0);
+      const leg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.75), metalLeadMat);
+      leg2.position.set(len / 2 - 0.15, -0.38, 0);
+
+      g.add(body, band, leg1, leg2);
+
+      // Đặt linh kiện tại trung điểm cạnh hình thoi và xoay theo phương chéo
+      g.position.set((x1 + x2) / 2, 0.95, (z1 + z2) / 2);
+      g.rotation.y = -angleY;
+      return g;
+    }
+
+    const bridgeGroup = new THREE.Group();
+    // 4 Đỉnh hình thoi của cầu Diode:
+    // Đỉnh Trái AC1: (-3.2, 0.0)
+    // Đỉnh Trên AC2:  (-1.0, -2.2)
+    // Đỉnh Dưới GND:  (-1.0,  2.2)
+    // Đỉnh Phải DC+:  ( 1.2, 0.0)
+
+    // D1: Nối Đỉnh Trái (A) -> Đỉnh Phải (K) qua nhánh trên phải
+    bridgeGroup.add(createDiamondDiode(-1.0, -2.2, 1.2, 0.0)); // D1 (K hướng về Đỉnh Phải)
+
+    // D2: Nối Đỉnh Trái (A) -> Đỉnh Trên (K)
+    bridgeGroup.add(createDiamondDiode(-3.2, 0.0, -1.0, -2.2)); // D2 (K hướng về Đỉnh Trên)
+
+    // D3: Nối Đỉnh Dưới (A) -> Đỉnh Trái (K)
+    bridgeGroup.add(createDiamondDiode(-1.0, 2.2, -3.2, 0.0));  // D3 (K hướng về Đỉnh Trái)
+
+    // D4: Nối Đỉnh Dưới (A) -> Đỉnh Phải (K) qua nhánh dưới phải
+    bridgeGroup.add(createDiamondDiode(-1.0, 2.2, 1.2, 0.0));  // D4 (K hướng về Đỉnh Phải)
+
+    scene.add(bridgeGroup);
+
+    /* 4. ĐIỆN TRỞ TẢI Rload (4 VẠCH MÀU CHUẨN) */
+    let resMeshGroup = new THREE.Group();
+    scene.add(resMeshGroup);
+
+    const COLOR_MAP = {
+      black: 0x111827,
+      brown: 0x78350f,
+      red: 0xdc2626,
+      yellow: 0xeab308,
+      violet: 0x7c3aed,
+      gold: 0xd4af37
+    };
+
+    function build3DResistor() {
+      while(resMeshGroup.children.length > 0) {
+        resMeshGroup.remove(resMeshGroup.children[0]);
+      }
+
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xd4a373, roughness: 0.5 });
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 1.85, 24), bodyMat);
+      body.position.set(6.5, 1.05, 0);
+      body.rotation.x = Math.PI / 2;
+      resMeshGroup.add(body);
+
+      const leg1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.9), metalLeadMat);
+      leg1.position.set(6.5, 0.6, -1.05);
+      const leg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.9), metalLeadMat);
+      leg2.position.set(6.5, 0.6, 1.05);
+      resMeshGroup.add(leg1, leg2);
+
+      let rings = ['brown', 'black', 'red', 'gold']; // 1k
+      if (resValue === 470) rings = ['yellow', 'violet', 'brown', 'gold'];
+      else if (resValue === 4700) rings = ['yellow', 'violet', 'red', 'gold'];
+
+      const ringPositions = [-0.6, -0.2, 0.2, 0.65];
+      rings.forEach((col, idx) => {
+        const ring = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.368, 0.368, 0.15, 24),
+          new THREE.MeshBasicMaterial({ color: COLOR_MAP[col] })
+        );
+        ring.position.set(6.5, 1.05, ringPositions[idx]);
+        ring.rotation.x = Math.PI / 2;
+        resMeshGroup.add(ring);
+      });
+    }
+
+    function updateResistorModel() {
+      updateCircuitParams();
+      build3DResistor();
+    }
+
+    /* 5. TỤ LỌC HÓA THỰC TẾ */
+    let capGroup = new THREE.Group();
+    scene.add(capGroup);
+
+    function build3DCapacitor() {
+      while(capGroup.children.length > 0) {
+        capGroup.remove(capGroup.children[0]);
+      }
+      if (capValue === 0) return;
+
+      let radius = 0.55;
+      let height = 1.8;
+      if (capValue === 100) { radius = 0.8; height = 2.4; }
+      else if (capValue === 1000) { radius = 1.15; height = 3.2; }
+
+      const capCan = new THREE.Mesh(
+        new THREE.CylinderGeometry(radius, radius, height, 32),
+        new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.4 })
+      );
+      capCan.position.set(3.8, 0.45 + height / 2, 0);
+
+      const capTop = new THREE.Mesh(
+        new THREE.CylinderGeometry(radius * 0.96, radius * 0.96, 0.08, 32),
+        metalSilverMat
+      );
+      capTop.position.set(3.8, 0.45 + height + 0.02, 0);
+
+      const stripe = new THREE.Mesh(
+        new THREE.PlaneGeometry(radius * 0.6, height * 0.98),
+        new THREE.MeshBasicMaterial({ color: 0xe5e7eb, side: THREE.DoubleSide })
+      );
+      stripe.position.set(3.8 + radius * 0.97, 0.45 + height / 2, 0);
+      stripe.rotation.y = Math.PI / 2;
+
+      const minusMark = new THREE.Mesh(
+        new THREE.PlaneGeometry(radius * 0.35, 0.12),
+        new THREE.MeshBasicMaterial({ color: 0x111827 })
+      );
+      minusMark.position.set(3.8 + radius * 0.98, 0.45 + height / 2, 0);
+      minusMark.rotation.y = Math.PI / 2;
+
+      capGroup.add(capCan, capTop, stripe, minusMark);
+    }
+
+    /* 6. QUE ĐO OSCILLOSCOPE CHUYÊN DỤNG */
+    function createOscProbeMesh(bandColorHex) {
+      const g = new THREE.Group();
+      const handle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.22, 0.22, 2.6, 20),
+        new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.5 })
+      );
+      handle.position.y = 1.8;
+
+      const colorRing = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.23, 0.23, 0.3, 20),
+        new THREE.MeshBasicMaterial({ color: bandColorHex })
+      );
+      colorRing.position.y = 2.4;
+
+      const tip = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.035, 0.035, 0.7, 12),
+        metalSilverMat
+      );
+      tip.position.y = 0.35;
+
+      const gndWire = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.04, 1.2),
+        wireBlackMat
+      );
+      gndWire.position.set(0.4, 1.2, 0);
+      gndWire.rotation.z = Math.PI / 4;
+
+      g.add(handle, colorRing, tip, gndWire);
+      return g;
+    }
+
+    const probeCH1 = createOscProbeMesh(0xfacc15); // Que Vàng CH1
+    const probeCH2 = createOscProbeMesh(0xef4444); // Que ĐỎ CH2
+    scene.add(probeCH1, probeCH2);
+
+    function positionProbes3D() {
+      // Đặt que đo chính xác vào các đỉnh của hình thoi và hai đầu tải
+      if (probeCH1State === 'CORRECT') probeCH1.position.set(-3.2, 0.5, 0.0); // Đỉnh trái AC
+      else if (probeCH1State === 'UNCLIPPED') probeCH1.position.set(-8.5, 0.5, 5.0);
+      else if (probeCH1State === 'SHORT_GND') probeCH1.position.set(0.0, 0.5, 4.5);
+      else if (probeCH1State === 'REVERSED_DC') probeCH1.position.set(5.2, 0.5, 0.0);
+
+      if (probeCH2State === 'CORRECT') probeCH2.position.set(5.0, 0.5, -0.6); // Nhánh DC output
+      else if (probeCH2State === 'UNCLIPPED') probeCH2.position.set(8.5, 0.5, 5.0);
+      else if (probeCH2State === 'SHORT_GND') probeCH2.position.set(3.0, 0.5, 4.5);
+      else if (probeCH2State === 'WRONG_POLARITY') probeCH2.position.set(5.0, 0.5, 0.8);
+    }
+
+    /* ================= 3. RENDER MÁY HIỆN SÓNG OSCILLOSCOPE ================= */
+    const oscCanvas = document.getElementById('oscCanvas');
+    const ctx = oscCanvas.getContext('2d');
+    let timeOsc = 0;
+
+    function drawOscilloscopeGrid() {
+      ctx.fillStyle = '#040c06';
+      ctx.fillRect(0, 0, oscCanvas.width, oscCanvas.height);
+
+      ctx.strokeStyle = '#0f2918';
+      ctx.lineWidth = 1;
+
+      for (let x = 0; x < oscCanvas.width; x += 39) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, oscCanvas.height); ctx.stroke();
+      }
+      for (let y = 0; y < oscCanvas.height; y += 23) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(oscCanvas.width, y); ctx.stroke();
+      }
+
+      ctx.strokeStyle = '#1b4d2e';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, oscCanvas.height / 2);
+      ctx.lineTo(oscCanvas.width, oscCanvas.height / 2);
+      ctx.stroke();
+    }
+
+    function renderWaves() {
+      drawOscilloscopeGrid();
+
+      if (!isPowered) {
+        document.getElementById('oscMetrics').innerHTML = '<span style="color:#ef4444; font-weight:bold;">NGUỒN ĐÃ TẮT (0.0V)</span>';
+        return;
+      }
+
+      timeOsc += 0.04;
+      const midY = oscCanvas.height / 2;
+      const zeroV_DC = oscCanvas.height - 18;
+      const voltScale = 4.8;
+
+      const vpAc = vacRms * Math.SQRT2;
+      const vpeakDc = Math.max(0, vpAc - 2 * DIODE_DROP);
+
+      let vdcAvg = 0;
+      let vRipple = 0;
+
+      if (capValue === 0) {
+        vdcAvg = (2 * vpeakDc) / Math.PI;
+        vRipple = vpeakDc;
+      } else {
+        const iload = vpeakDc / resValue;
+        vRipple = (iload) / (2 * FREQ * (capValue * 1e-6));
+        if (vRipple > vpeakDc) vRipple = vpeakDc;
+        vdcAvg = vpeakDc - (vRipple / 2);
+      }
+
+      currentMetrics = { vpAc, vpeakDc, vdcAvg, vRipple };
+
+      let ch1Note = `Vp = ${vpAc.toFixed(2)}V (Chuẩn)`;
+      if (probeCH1State === 'UNCLIPPED') ch1Note = 'CHƯA KẸP (Hở que)';
+      else if (probeCH1State === 'SHORT_GND') ch1Note = '0.0V (Chập Mass)';
+      else if (probeCH1State === 'REVERSED_DC') ch1Note = 'Nhầm nhánh DC';
+
+      let ch2Note = `Vdc = ${vdcAvg.toFixed(2)}V | Vrip = ${vRipple.toFixed(2)}V`;
+      if (probeCH2State === 'UNCLIPPED') ch2Note = 'CHƯA KẸP (Hở que)';
+      else if (probeCH2State === 'SHORT_GND') ch2Note = '0.0V (Chập Mass)';
+      else if (probeCH2State === 'WRONG_POLARITY') ch2Note = 'NGƯỢC CỰC TỤ (-Vdc)';
+
+      document.getElementById('oscMetrics').innerHTML = `
+        <strong>CH1 (AC):</strong> ${ch1Note}<br>
+        <strong>CH2 (DC):</strong> ${ch2Note}
+      `;
+
+      // 1. SÓNG KÊNH CH1 (VÀNG)
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+
+      if (probeCH1State === 'UNCLIPPED') {
+        for (let x = 0; x < oscCanvas.width; x++) {
+          const noise = 1.2 * Math.sin((x * 0.08) + timeOsc * 2) + (Math.random() - 0.5) * 1.5;
+          const y = midY - noise;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+      } else if (probeCH1State === 'SHORT_GND') {
+        ctx.moveTo(0, midY); ctx.lineTo(oscCanvas.width, midY);
+      } else if (probeCH1State === 'REVERSED_DC') {
+        for (let x = 0; x < oscCanvas.width; x++) {
+          const t = (x * 0.02) + timeOsc;
+          const phase = (t % Math.PI);
+          const dropFactor = (vRipple / vpeakDc) * (phase / Math.PI);
+          const vInst = capValue === 0 ? Math.max(0, Math.abs(vpAc * Math.sin(t)) - 2 * DIODE_DROP) : vpeakDc * (1 - dropFactor);
+          const y = zeroV_DC - (vInst * voltScale);
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+      } else {
+        for (let x = 0; x < oscCanvas.width; x++) {
+          const t = (x * 0.02) + timeOsc;
+          const vAc = vpAc * Math.sin(t);
+          const y = midY - (vAc * voltScale);
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+
+      // 2. SÓNG KÊNH CH2 (ĐỎ)
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+
+      if (probeCH2State === 'UNCLIPPED') {
+        for (let x = 0; x < oscCanvas.width; x++) {
+          const noise = 0.8 * Math.sin((x * 0.05) + timeOsc) + (Math.random() - 0.5) * 1.2;
+          const y = zeroV_DC - noise;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+      } else if (probeCH2State === 'SHORT_GND') {
+        ctx.moveTo(0, zeroV_DC); ctx.lineTo(oscCanvas.width, zeroV_DC);
+      } else if (probeCH2State === 'WRONG_POLARITY') {
+        for (let x = 0; x < oscCanvas.width; x++) {
+          const t = (x * 0.02) + timeOsc;
+          let vInst = 0;
+          if (capValue === 0) {
+            vInst = Math.max(0, Math.abs(vpAc * Math.sin(t)) - 2 * DIODE_DROP);
+          } else {
+            const phase = (t % Math.PI);
+            vInst = vpeakDc * (1 - (vRipple / vpeakDc) * (phase / Math.PI));
+          }
+          const y = zeroV_DC + (vInst * (voltScale * 0.6));
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+      } else {
+        for (let x = 0; x < oscCanvas.width; x++) {
+          const t = (x * 0.02) + timeOsc;
+          let vInst = 0;
+          if (capValue === 0) {
+            vInst = Math.max(0, Math.abs(vpAc * Math.sin(t)) - 2 * DIODE_DROP);
+          } else {
+            const phase = (t % Math.PI);
+            vInst = vpeakDc * (1 - (vRipple / vpeakDc) * (phase / Math.PI));
+          }
+          const y = zeroV_DC - (vInst * voltScale);
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+      }
+      ctx.stroke();
+    }
+
+    /* ================= 4. GHI DỮ LIỆU BÁO CÁO ================= */
+    let recordCount = 0;
+    function saveRowToReport() {
+      if (!isPowered) {
+        alert("Vui lòng BẬT nguồn AC trước khi ghi nhận số liệu!");
+        return;
+      }
+      recordCount++;
+      const tbody = document.getElementById('tblReportBody');
+      const row = document.createElement('tr');
+
+      let probeStatusText = "Đúng kỹ thuật";
+      let evalQuality = "Đạt yêu cầu";
+
+      if (probeCH1State !== 'CORRECT' || probeCH2State !== 'CORRECT') {
+        probeStatusText = "<span style='color:#ef4444; font-weight:bold;'>Lỗi kẹp que đo</span>";
+        evalQuality = "<span style='color:#facc15;'>Số liệu sai lệch (Cần kẹp lại)</span>";
+      } else {
+        if (capValue === 0) evalQuality = "Chưa lọc phẳng (Gợn 100%)";
+        else if (capValue === 10) evalQuality = "Độ gợn còn lớn";
+        else if (capValue >= 100) evalQuality = "Lọc phẳng rất tốt";
+      }
+
+      row.innerHTML = `
+        <td>#${recordCount}</td>
+        <td>${probeStatusText}</td>
+        <td>${vacRms} VAC</td>
+        <td><strong>${capValue === 0 ? 'Không tụ' : capValue + ' µF'}</strong></td>
+        <td>${resValue} Ω</td>
+        <td>${probeCH1State === 'CORRECT' ? currentMetrics.vpAc.toFixed(2) + ' V' : 'Lỗi'}</td>
+        <td><strong style="color:var(--ch2-color);">${probeCH2State === 'CORRECT' ? currentMetrics.vdcAvg.toFixed(2) + ' V' : 'Lỗi'}</strong></td>
+        <td style="color:#f87171;">${probeCH2State === 'CORRECT' ? currentMetrics.vRipple.toFixed(2) + ' V' : 'Lỗi'}</td>
+        <td>${evalQuality}</td>
+      `;
+      tbody.appendChild(row);
+    }
+
+    /* ================= 5. VÒNG LẶP RENDER CHÍNH ================= */
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+      renderWaves();
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    build3DResistor();
+    build3DCapacitor();
+    updateCircuitParams();
+    positionProbes3D();
+    animate();
+  </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+{
+  "overview": {
+    "position": [
+      -2.7,
+      2.5999999,
+      2.2
+    ],
+    "target": [
+      -1.7010829,
+      2.0381098,
+      1.2322996
+    ],
+    "up": [
+      0.2690482,
+      0.9271892,
+      -0.2606403
+    ],
+    "fov": 39.760704105218096,
+    "near": 0.019999999552965164,
+    "far": 30.0,
+    "sourceCamera": "CAM_Room_Overview",
+    "kind": "ORIGINAL",
+    "aspect": 1.7777777777777777
+  },
+  "entrance": {
+    "position": [
+      2.0,
+      1.6,
+      2.3
+    ],
+    "target": [
+      1.3104814,
+      1.3586686,
+      0.9899148
+    ],
+    "up": [
+      -0.0749328,
+      0.9869727,
+      -0.1423725
+    ],
+    "fov": 45.74732915818953,
+    "near": 0.019999999552965164,
+    "far": 30.0,
+    "sourceCamera": "CAM_Room_Entrance",
+    "kind": "ORIGINAL",
+    "aspect": 1.7777777777777777
+  },
+  "bench": {
+    "position": [
+      0.0,
+      1.35,
+      -0.75
+    ],
+    "target": [
+      0.0,
+      0.7929143,
+      -2.142715
+    ],
+    "up": [
+      0.0,
+      0.9284768,
+      -0.3713905
+    ],
+    "fov": 28.409271026435036,
+    "near": 0.019999999552965164,
+    "far": 30.0,
+    "sourceCamera": "CAM_Student_View",
+    "kind": "ORIGINAL",
+    "aspect": 1.7777777777777777
+  },
+  "board": {
+    "position": [
+      -0.0504,
+      1.14,
+      -1.23
+    ],
+    "target": [
+      -0.0504,
+      0.825,
+      -1.6016
+    ],
+    "fov": 43,
+    "sourceCamera": "CAM_Breadboard_Closeup",
+    "kind": "TASK_VIEW",
+    "near": 0.005,
+    "far": 30,
+    "reason": "Measured closeup of high-detail workbench; original closeup targets another source layout."
+  },
+  "dmm": {
+    "position": [
+      0.0504,
+      1.06,
+      -1.25
+    ],
+    "target": [
+      0.0504,
+      0.97,
+      -1.84
+    ],
+    "fov": 42,
+    "sourceCamera": "CAM_DMM_Closeup",
+    "kind": "TASK_VIEW",
+    "near": 0.005,
+    "far": 30,
+    "reason": "Measured closeup of high-detail workbench; original closeup targets another source layout."
+  },
+  "instruments": {
+    "position": [
+      0.12,
+      1.43,
+      -0.85
+    ],
+    "target": [
+      -0.1,
+      1.01,
+      -1.77
+    ],
+    "fov": 49,
+    "sourceCamera": "CAM_Oscilloscope_Closeup",
+    "kind": "TASK_VIEW",
+    "near": 0.005,
+    "far": 30,
+    "reason": "Measured closeup of high-detail workbench; original closeup targets another source layout."
+  },
+  "components": {
+    "position": [
+      0.77,
+      1.24,
+      -0.95
+    ],
+    "target": [
+      0.86,
+      0.82,
+      -1.59
+    ],
+    "fov": 44,
+    "sourceCamera": "CAM_Components",
+    "kind": "TASK_VIEW",
+    "near": 0.005,
+    "far": 30,
+    "reason": "Measured closeup of high-detail workbench; original closeup targets another source layout."
+  },
+  "originalDmm": {
+    "position": [
+      -0.82,
+      1.08,
+      -1.15
+    ],
+    "target": [
+      -0.8967915,
+      0.5680578,
+      -2.5578415
+    ],
+    "up": [
+      -0.0185885,
+      0.9399562,
+      -0.3407883
+    ],
+    "fov": 22.89519337769516,
+    "near": 0.019999999552965164,
+    "far": 30.0,
+    "sourceCamera": "CAM_DMM_Closeup",
+    "kind": "ORIGINAL",
+    "aspect": 1.7777777777777777
+  },
+  "originalScope": {
+    "position": [
+      -0.8,
+      1.0,
+      -1.55
+    ],
+    "target": [
+      -0.8,
+      0.727679,
+      -3.0250735
+    ],
+    "up": [
+      0.0,
+      0.9833823,
+      -0.1815473
+    ],
+    "fov": 22.89519337769516,
+    "near": 0.019999999552965164,
+    "far": 30.0,
+    "sourceCamera": "CAM_Oscilloscope_Closeup",
+    "kind": "ORIGINAL",
+    "aspect": 1.7777777777777777
+  },
+  "originalBoard": {
+    "position": [
+      0.0,
+      1.05,
+      -1.35
+    ],
+    "target": [
+      0.0,
+      0.318951,
+      -2.6597967
+    ],
+    "up": [
+      0.0,
+      0.8731978,
+      -0.487366
+    ],
+    "fov": 22.89519337769516,
+    "near": 0.019999999552965164,
+    "far": 30.0,
+    "sourceCamera": "CAM_Breadboard_Closeup",
+    "kind": "ORIGINAL",
+    "aspect": 1.7777777777777777
+  },
+  "originalComponents": {
+    "position": [
+      0.98,
+      1.0,
+      -1.3
+    ],
+    "target": [
+      0.98,
+      0.3291795,
+      -2.6416409
+    ],
+    "up": [
+      0.0,
+      0.8944273,
+      -0.4472136
+    ],
+    "fov": 22.89519337769516,
+    "near": 0.019999999552965164,
+    "far": 30.0,
+    "sourceCamera": "CAM_Components",
+    "kind": "ORIGINAL",
+    "aspect": 1.7777777777777777
+  },
+  "top": {
+    "position": [
+      0.0,
+      2.0,
+      -1.8
+    ],
+    "target": [
+      0.0,
+      0.5,
+      -1.8
+    ],
+    "up": [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    "fov": 28.409271026435036,
+    "near": 0.019999999552965164,
+    "far": 30.0,
+    "sourceCamera": "CAM_Workbench_Top",
+    "kind": "ORIGINAL",
+    "aspect": 1.7777777777777777
+  },
+  "scope": {
+    "position": [
+      -0.43,
+      1.13,
+      -1.22
+    ],
+    "target": [
+      -0.502656,
+      0.97436,
+      -1.7721200000000001
+    ],
+    "fov": 36,
+    "near": 0.005,
+    "far": 30,
+    "kind": "TASK_VIEW",
+    "sourceCamera": null,
+    "reason": "Task camera derived from verified screen bounds."
+  },
+  "supply": {
+    "position": [
+      0.4032,
+      1.12,
+      -1.16
+    ],
+    "target": [
+      0.4032,
+      1.0144112,
+      -1.70374405
+    ],
+    "fov": 36,
+    "near": 0.005,
+    "far": 30,
+    "kind": "TASK_VIEW",
+    "sourceCamera": null,
+    "reason": "Task camera derived from verified screen bounds."
+  },
+  "generator": {
+    "position": [
+      0.4,
+      1.29,
+      -1.23
+    ],
+    "target": [
+      0.35951999999999995,
+      1.19107995,
+      -1.73264
+    ],
+    "fov": 36,
+    "near": 0.005,
+    "far": 30,
+    "kind": "TASK_VIEW",
+    "sourceCamera": null,
+    "reason": "Task camera derived from verified screen bounds."
+  }
+}

@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {renderBiscotMarkdown} from '../features/ai-tutor/components/biscot-markdown';
+import {validateRosterInput} from '../features/lab/roster-validation';
+const classes=new Set(['QA-LOCAL']);
+const student={studentCode:'DEMO21201',fullName:'Sinh viên minh họa',className:'QA-LOCAL',uid:''};
+assert.equal(validateRosterInput([student],classes)[0].uid,'');
+assert.throws(()=>validateRosterInput([student,student],classes),/trùng/);
+assert.throws(()=>validateRosterInput([{...student,className:''}],classes),/chờ xác nhận/);
+assert.throws(()=>validateRosterInput([{...student,className:'UNKNOWN'}],classes),/xác nhận lớp/);
+assert.throws(()=>validateRosterInput([{...student,uid:'not a firebase uid'}],classes),/UID/);
+console.log('PASS Roster validation: duplicates, missing class, unknown class, no invented UID');
+const markup=renderBiscotMarkdown('Vật lý: $R = \\frac{U}{I}$, $\\Omega$\n<script>alert(1)</script>\n[x](javascript:alert(1))\n<img src=x onerror=alert(1)>');
+assert.match(markup,/katex/);assert.match(markup,/Vật lý/);assert.doesNotMatch(markup,/<script|<img|href="javascript:/i);
+assert.match(renderBiscotMarkdown('PHIÃŠN'),/PHIÊN/);
+console.log('PASS React Markdown/KaTeX: Unicode, math, HTML and javascript URL blocked');
