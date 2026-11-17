@@ -9,5 +9,5 @@ export function prepareRequestedStudent(students:ExistingStudent[]){
   const groups=new Map<string,number>();active.forEach(s=>groups.set(s.className||'',(groups.get(s.className||'')||0)+1));
   const matches=[...groups].filter(([,count])=>count===46);
   if(matches.length!==1)return {ready:false as const,reason:'Chưa xác định duy nhất nhóm đang có 46 sinh viên từ dữ liệu đã tải.'};
-  return {ready:true as const,document:'labRoster/DEMO21201',record:{studentCode:code,fullName:'Sinh viên minh họa',className:matches[0][0],uid:''},activeCountBefore:46,activeCountAfter:47,requiresOwnerApproval:true};
+  return {ready:true as const,document:'labRoster/demo21201',record:{studentCode:code,fullName:'Sinh viên minh họa',className:matches[0][0],uid:''},activeCountBefore:46,activeCountAfter:47,requiresOwnerApproval:true};
 }
